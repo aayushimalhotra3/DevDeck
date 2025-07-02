@@ -1,38 +1,48 @@
-'use client'
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Github, ExternalLink, Star, GitFork } from 'lucide-react'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Github, ExternalLink, Star, GitFork } from 'lucide-react';
 
 interface Repository {
-  id: number
-  name: string
-  description: string
-  html_url: string
-  language: string
-  stargazers_count: number
-  forks_count?: number
-  homepage?: string
-  topics?: string[]
-  updated_at: string
+  id: number;
+  name: string;
+  description: string;
+  html_url: string;
+  language: string;
+  stargazers_count: number;
+  forks_count?: number;
+  homepage?: string;
+  topics?: string[];
+  updated_at: string;
 }
 
 interface ProjectCardProps {
-  repository: Repository
-  showAddButton?: boolean
-  onAddToPortfolio?: (repo: Repository) => void
+  repository: Repository;
+  showAddButton?: boolean;
+  onAddToPortfolio?: (repo: Repository) => void;
 }
 
-export function ProjectCard({ repository, showAddButton = false, onAddToPortfolio }: ProjectCardProps) {
+export function ProjectCard({
+  repository,
+  showAddButton = false,
+  onAddToPortfolio,
+}: ProjectCardProps) {
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
-    })
-  }
+      day: 'numeric',
+    });
+  };
 
   const getLanguageColor = (language: string) => {
     const colors: { [key: string]: string } = {
@@ -51,9 +61,9 @@ export function ProjectCard({ repository, showAddButton = false, onAddToPortfoli
       HTML: 'bg-orange-600',
       CSS: 'bg-blue-600',
       Shell: 'bg-gray-500',
-    }
-    return colors[language] || 'bg-gray-400'
-  }
+    };
+    return colors[language] || 'bg-gray-400';
+  };
 
   return (
     <Card className="h-full hover:shadow-lg transition-shadow duration-200">
@@ -69,7 +79,7 @@ export function ProjectCard({ repository, showAddButton = false, onAddToPortfoli
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-0">
         <div className="space-y-4">
           {/* Language and Stats */}
@@ -77,16 +87,20 @@ export function ProjectCard({ repository, showAddButton = false, onAddToPortfoli
             <div className="flex items-center space-x-4">
               {repository.language && (
                 <div className="flex items-center space-x-1">
-                  <div className={`w-3 h-3 rounded-full ${getLanguageColor(repository.language)}`} />
-                  <span className="text-muted-foreground">{repository.language}</span>
+                  <div
+                    className={`w-3 h-3 rounded-full ${getLanguageColor(repository.language)}`}
+                  />
+                  <span className="text-muted-foreground">
+                    {repository.language}
+                  </span>
                 </div>
               )}
-              
+
               <div className="flex items-center space-x-1 text-muted-foreground">
                 <Star className="w-3 h-3" />
                 <span>{repository.stargazers_count}</span>
               </div>
-              
+
               {repository.forks_count !== undefined && (
                 <div className="flex items-center space-x-1 text-muted-foreground">
                   <GitFork className="w-3 h-3" />
@@ -95,11 +109,11 @@ export function ProjectCard({ repository, showAddButton = false, onAddToPortfoli
               )}
             </div>
           </div>
-          
+
           {/* Topics */}
           {repository.topics && repository.topics.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {repository.topics.slice(0, 3).map((topic) => (
+              {repository.topics.slice(0, 3).map(topic => (
                 <Badge key={topic} variant="secondary" className="text-xs">
                   {topic}
                 </Badge>
@@ -111,28 +125,28 @@ export function ProjectCard({ repository, showAddButton = false, onAddToPortfoli
               )}
             </div>
           )}
-          
+
           {/* Updated Date */}
           <div className="text-xs text-muted-foreground">
             Updated {formatDate(repository.updated_at)}
           </div>
-          
+
           {/* Action Buttons */}
           <div className="flex space-x-2 pt-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="flex-1"
               onClick={() => window.open(repository.html_url, '_blank')}
             >
               <Github className="w-3 h-3 mr-1" />
               Code
             </Button>
-            
+
             {repository.homepage && (
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="flex-1"
                 onClick={() => window.open(repository.homepage, '_blank')}
               >
@@ -140,10 +154,10 @@ export function ProjectCard({ repository, showAddButton = false, onAddToPortfoli
                 Demo
               </Button>
             )}
-            
+
             {showAddButton && onAddToPortfolio && (
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 className="flex-1"
                 onClick={() => onAddToPortfolio(repository)}
               >
@@ -154,7 +168,7 @@ export function ProjectCard({ repository, showAddButton = false, onAddToPortfoli
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 // Loading skeleton for ProjectCard
@@ -167,7 +181,7 @@ export function ProjectCardSkeleton() {
           <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-0">
         <div className="space-y-4">
           <div className="flex items-center space-x-4">
@@ -175,15 +189,15 @@ export function ProjectCardSkeleton() {
             <div className="h-3 bg-muted animate-pulse rounded w-16" />
             <div className="h-3 bg-muted animate-pulse rounded w-8" />
           </div>
-          
+
           <div className="flex space-x-1">
             <div className="h-5 bg-muted animate-pulse rounded w-12" />
             <div className="h-5 bg-muted animate-pulse rounded w-16" />
             <div className="h-5 bg-muted animate-pulse rounded w-10" />
           </div>
-          
+
           <div className="h-3 bg-muted animate-pulse rounded w-24" />
-          
+
           <div className="flex space-x-2 pt-2">
             <div className="h-8 bg-muted animate-pulse rounded flex-1" />
             <div className="h-8 bg-muted animate-pulse rounded flex-1" />
@@ -191,5 +205,5 @@ export function ProjectCardSkeleton() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

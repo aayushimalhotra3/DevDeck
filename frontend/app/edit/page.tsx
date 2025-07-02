@@ -1,69 +1,75 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { DragEditor } from '@/components/DragEditor'
-import { LivePreview } from '@/components/LivePreview'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useState, useEffect } from 'react';
+import { DragEditor } from '@/components/DragEditor';
+import { LivePreview } from '@/components/LivePreview';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface PortfolioBlock {
-  id: string
-  type: 'bio' | 'projects' | 'skills' | 'blog'
-  content: any
-  position: { x: number; y: number }
+  id: string;
+  type: 'bio' | 'projects' | 'skills' | 'blog';
+  content: any;
+  position: { x: number; y: number };
 }
 
 export default function EditPortfolio() {
-  const [blocks, setBlocks] = useState<PortfolioBlock[]>([])
-  const [activeTab, setActiveTab] = useState('editor')
-  const [saving, setSaving] = useState(false)
+  const [blocks, setBlocks] = useState<PortfolioBlock[]>([]);
+  const [activeTab, setActiveTab] = useState('editor');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     // Load existing portfolio data
     const loadPortfolio = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/portfolio`, {
-          credentials: 'include'
-        })
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/portfolio`,
+          {
+            credentials: 'include',
+          }
+        );
         if (response.ok) {
-          const data = await response.json()
-          setBlocks(data.blocks || [])
+          const data = await response.json();
+          setBlocks(data.blocks || []);
         }
       } catch (error) {
-        console.error('Failed to load portfolio:', error)
+        console.error('Failed to load portfolio:', error);
       }
-    }
+    };
 
-    loadPortfolio()
-  }, [])
+    loadPortfolio();
+  }, []);
 
   const handleSavePortfolio = async () => {
-    setSaving(true)
+    setSaving(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/portfolio`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ blocks })
-      })
-      
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/portfolio`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({ blocks }),
+        }
+      );
+
       if (response.ok) {
         // Show success message
-        console.log('Portfolio saved successfully')
+        console.log('Portfolio saved successfully');
       }
     } catch (error) {
-      console.error('Failed to save portfolio:', error)
+      console.error('Failed to save portfolio:', error);
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const handleBlockUpdate = (updatedBlocks: PortfolioBlock[]) => {
-    setBlocks(updatedBlocks)
-  }
+    setBlocks(updatedBlocks);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -75,15 +81,10 @@ export default function EditPortfolio() {
           </p>
         </div>
         <div className="space-x-4">
-          <Button 
-            onClick={handleSavePortfolio} 
-            disabled={saving}
-          >
+          <Button onClick={handleSavePortfolio} disabled={saving}>
             {saving ? 'Saving...' : 'Save Portfolio'}
           </Button>
-          <Button variant="outline">
-            Preview
-          </Button>
+          <Button variant="outline">Preview</Button>
         </div>
       </div>
 
@@ -92,7 +93,7 @@ export default function EditPortfolio() {
           <TabsTrigger value="editor">Editor</TabsTrigger>
           <TabsTrigger value="preview">Live Preview</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="editor" className="mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-1">
@@ -116,20 +117,17 @@ export default function EditPortfolio() {
                 </CardContent>
               </Card>
             </div>
-            
+
             <div className="lg:col-span-3">
-              <DragEditor 
-                blocks={blocks} 
-                onBlocksUpdate={handleBlockUpdate}
-              />
+              <DragEditor blocks={blocks} onBlocksUpdate={handleBlockUpdate} />
             </div>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="preview" className="mt-6">
           <LivePreview blocks={blocks} />
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

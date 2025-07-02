@@ -1,59 +1,67 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Github, ExternalLink, Globe } from 'lucide-react'
-import { io, Socket } from 'socket.io-client'
+import { useEffect, useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Github, ExternalLink, Globe } from 'lucide-react';
+import { io, Socket } from 'socket.io-client';
 
 interface PortfolioBlock {
-  id: string
-  type: 'bio' | 'projects' | 'skills' | 'blog'
-  content: any
-  position: { x: number; y: number }
+  id: string;
+  type: 'bio' | 'projects' | 'skills' | 'blog';
+  content: any;
+  position: { x: number; y: number };
 }
 
 interface LivePreviewProps {
-  blocks: PortfolioBlock[]
+  blocks: PortfolioBlock[];
 }
 
 export function LivePreview({ blocks }: LivePreviewProps) {
-  const [socket, setSocket] = useState<Socket | null>(null)
-  const [isConnected, setIsConnected] = useState(false)
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     // Initialize WebSocket connection for live updates
-    const socketInstance = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:5000')
-    
+    const socketInstance = io(
+      process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:5000'
+    );
+
     socketInstance.on('connect', () => {
-      setIsConnected(true)
-      console.log('Connected to WebSocket')
-    })
-    
+      setIsConnected(true);
+      console.log('Connected to WebSocket');
+    });
+
     socketInstance.on('disconnect', () => {
-      setIsConnected(false)
-      console.log('Disconnected from WebSocket')
-    })
-    
-    socketInstance.on('portfolio-updated', (data) => {
-      console.log('Portfolio updated via WebSocket:', data)
+      setIsConnected(false);
+      console.log('Disconnected from WebSocket');
+    });
+
+    socketInstance.on('portfolio-updated', data => {
+      console.log('Portfolio updated via WebSocket:', data);
       // Handle real-time updates from other sessions
-    })
-    
-    setSocket(socketInstance)
-    
+    });
+
+    setSocket(socketInstance);
+
     return () => {
-      socketInstance.disconnect()
-    }
-  }, [])
+      socketInstance.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     // Emit portfolio changes to WebSocket
     if (socket && isConnected) {
-      socket.emit('portfolio-change', { blocks })
+      socket.emit('portfolio-change', { blocks });
     }
-  }, [blocks, socket, isConnected])
+  }, [blocks, socket, isConnected]);
 
   const renderBlock = (block: PortfolioBlock) => {
     switch (block.type) {
@@ -79,8 +87,8 @@ export function LivePreview({ blocks }: LivePreviewProps) {
               </div>
             </CardContent>
           </Card>
-        )
-      
+        );
+
       case 'skills':
         return (
           <Card key={block.id} className="mb-6">
@@ -88,9 +96,7 @@ export function LivePreview({ blocks }: LivePreviewProps) {
               <CardTitle className="flex items-center">
                 💻 Skills & Technologies
               </CardTitle>
-              <CardDescription>
-                Technologies I work with
-              </CardDescription>
+              <CardDescription>Technologies I work with</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
@@ -101,13 +107,15 @@ export function LivePreview({ blocks }: LivePreviewProps) {
                     </Badge>
                   ))
                 ) : (
-                  <p className="text-muted-foreground">Add your skills to see them here...</p>
+                  <p className="text-muted-foreground">
+                    Add your skills to see them here...
+                  </p>
                 )}
               </div>
             </CardContent>
           </Card>
-        )
-      
+        );
+
       case 'projects':
         return (
           <Card key={block.id} className="mb-6">
@@ -121,7 +129,8 @@ export function LivePreview({ blocks }: LivePreviewProps) {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                {block.content?.description || 'Project description will appear here...'}
+                {block.content?.description ||
+                  'Project description will appear here...'}
               </p>
               <div className="flex space-x-2">
                 {block.content?.githubUrl && (
@@ -139,8 +148,8 @@ export function LivePreview({ blocks }: LivePreviewProps) {
               </div>
             </CardContent>
           </Card>
-        )
-      
+        );
+
       case 'blog':
         return (
           <Card key={block.id} className="mb-6">
@@ -149,7 +158,9 @@ export function LivePreview({ blocks }: LivePreviewProps) {
                 📚 Latest Blog Posts
               </CardTitle>
               <CardDescription>
-                {block.content?.platform ? `From ${block.content.platform}` : 'My writing'}
+                {block.content?.platform
+                  ? `From ${block.content.platform}`
+                  : 'My writing'}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -171,12 +182,12 @@ export function LivePreview({ blocks }: LivePreviewProps) {
               )}
             </CardContent>
           </Card>
-        )
-      
+        );
+
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -184,36 +195,39 @@ export function LivePreview({ blocks }: LivePreviewProps) {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-semibold">Live Preview</h2>
         <div className="flex items-center space-x-2">
-          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
+          <div
+            className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+          />
           <span className="text-sm text-muted-foreground">
             {isConnected ? 'Connected' : 'Disconnected'}
           </span>
         </div>
       </div>
-      
+
       {/* Portfolio Preview */}
       <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 rounded-lg p-8 min-h-96">
         {blocks.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🎨</div>
-            <h3 className="text-xl font-semibold mb-2">Your Portfolio Preview</h3>
+            <h3 className="text-xl font-semibold mb-2">
+              Your Portfolio Preview
+            </h3>
             <p className="text-muted-foreground">
               Add blocks in the editor to see your portfolio come to life!
             </p>
           </div>
         ) : (
-          <div className="space-y-6">
-            {blocks.map(renderBlock)}
-          </div>
+          <div className="space-y-6">{blocks.map(renderBlock)}</div>
         )}
       </div>
-      
+
       {/* Preview Info */}
       <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
         <p className="text-sm text-blue-700 dark:text-blue-300">
-          💡 This is how your portfolio will look to visitors. Changes are updated in real-time!
+          💡 This is how your portfolio will look to visitors. Changes are
+          updated in real-time!
         </p>
       </div>
     </div>
-  )
+  );
 }

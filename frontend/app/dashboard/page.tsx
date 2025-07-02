@@ -1,44 +1,57 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ProjectCard } from '@/components/ProjectCard'
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { ProjectCard } from '@/components/ProjectCard';
 
 interface Repository {
-  id: number
-  name: string
-  description: string
-  html_url: string
-  language: string
-  stargazers_count: number
+  id: number;
+  name: string;
+  description: string;
+  html_url: string;
+  language: string;
+  stargazers_count: number;
+  forks_count?: number;
+  homepage?: string;
+  topics?: string[];
+  updated_at: string;
 }
 
 export default function Dashboard() {
-  const [repositories, setRepositories] = useState<Repository[]>([])
-  const [loading, setLoading] = useState(true)
+  const [repositories, setRepositories] = useState<Repository[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch user repositories from backend
     const fetchRepositories = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/github/repos`, {
-          credentials: 'include'
-        })
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/github/repos`,
+          {
+            credentials: 'include',
+          }
+        );
         if (response.ok) {
-          const data = await response.json()
-          setRepositories(data)
+          const data = await response.json();
+          setRepositories(data);
         }
       } catch (error) {
-        console.error('Failed to fetch repositories:', error)
+        console.error('Failed to fetch repositories:', error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchRepositories()
-  }, [])
+    fetchRepositories();
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -51,14 +64,10 @@ export default function Dashboard() {
         </div>
         <div className="space-x-4">
           <Link href="/edit">
-            <Button>
-              Edit Portfolio
-            </Button>
+            <Button>Edit Portfolio</Button>
           </Link>
           <Link href="/preview/username">
-            <Button variant="outline">
-              View Portfolio
-            </Button>
+            <Button variant="outline">View Portfolio</Button>
           </Link>
         </div>
       </div>
@@ -73,7 +82,7 @@ export default function Dashboard() {
             <div className="text-2xl font-bold">1,234</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>GitHub Repos</CardTitle>
@@ -83,7 +92,7 @@ export default function Dashboard() {
             <div className="text-2xl font-bold">{repositories.length}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Portfolio Score</CardTitle>
@@ -105,12 +114,12 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {repositories.map((repo) => (
+            {repositories.map(repo => (
               <ProjectCard key={repo.id} repository={repo} />
             ))}
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
