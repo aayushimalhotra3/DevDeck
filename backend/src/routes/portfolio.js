@@ -2,7 +2,14 @@ const express = require('express')
 const Portfolio = require('../models/Portfolio')
 const User = require('../models/User')
 const { auth } = require('../middleware/auth')
-const { validatePortfolioUpdate } = require('../middleware/validation')
+const {
+  validatePortfolioUpdate,
+  validatePortfolioSave,
+  validatePortfolioId,
+  validateBlockContent,
+  validateUsername,
+  validateBlockId
+} = require('../middleware/validation')
 const { asyncHandler } = require('../middleware/errorHandler')
 
 const router = express.Router()
@@ -380,6 +387,161 @@ router.put('/blocks/reorder', auth, asyncHandler(async (req, res) => {
   })
 }))
 
+// @desc    Save portfolio data (autosave endpoint)
+// @route   POST /api/portfolio/save
+// @access  Private
+router.post('/save', auth, validatePortfolioSave, validateBlockContent, asyncHandler(async (req, res) => {
+  const { blocks, layout, theme, seo, version } = req.body
+  
+  let portfolio = await Portfolio.findByUserId(req.user.userId)
+  
+  if (!portfolio) {
+    portfolio = new Portfolio({
+      userId: req.user.userId,
+      blocks: blocks || [],
+      layout: layout || {},
+      theme: theme || {},
+      seo: seo || {}
+    })
+  } else {
+    // Check version for conflict resolution
+    if (version && portfolio.version > version) {
+      return res.status(409).json({
+        success: false,
+        message: 'Portfolio has been modified by another session',
+        currentVersion: portfolio.version,
+        portfolio: portfolio
+      })
+    }
+    
+    // Update fields if provided
+    if (blocks !== undefined) portfolio.blocks = blocks
+    if (layout) portfolio.layout = { ...portfolio.layout, ...layout }
+    if (theme) portfolio.theme = { ...portfolio.theme, ...theme }
+    if (seo) portfolio.seo = { ...portfolio.seo, ...seo }
+  }
+  
+  await portfolio.save()
+  
+  // Emit real-time update via Socket.io
+  if (req.io) {
+    req.io.to(`portfolio-${req.user.userId}`).emit('portfolio-saved', {
+      portfolio: portfolio,
+      timestamp: new Date().toISOString()
+    })
+  }
+  
+  res.status(200).json({
+    success: true,
+    message: 'Portfolio saved successfully',
+    portfolio: portfolio,
+    version: portfolio.version
+  })
+}))
+
+// @desc    Get portfolio by ID
+// @route   GET /api/portfolio/:id
+// @access  Private
+router.get('/:id', auth, validatePortfolioId, asyncHandler(async (req, res) => {
+  const { id } = req.params
+  
+  // Validate ObjectId format
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid portfolio ID format'
+    })
+  }
+  
+  const portfolio = await Portfolio.findById(id).populate('userId', 'username name avatar_url')
+  
+  if (!portfolio) {
+    return res.status(404).json({
+      success: false,
+      message: 'Portfolio not found'
+    })
+  }
+  
+  // Check if user has access to this portfolio
+  if (portfolio.userId._id.toString() !== req.user.userId) {
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied to this portfolio'
+    })
+  }
+  
+  res.status(200).json({
+    success: true,
+    portfolio: portfolio
+  })
+}))
+
+// @desc    Update portfolio by ID
+// @route   PUT /api/portfolio/:id
+// @access  Private
+router.put('/:id', auth, validatePortfolioId, validatePortfolioUpdate, asyncHandler(async (req, res) => {
+  const { id } = req.params
+  const { blocks, layout, theme, seo, custom_domain, version } = req.body
+  
+  // Validate ObjectId format
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid portfolio ID format'
+    })
+  }
+  
+  const portfolio = await Portfolio.findById(id)
+  
+  if (!portfolio) {
+    return res.status(404).json({
+      success: false,
+      message: 'Portfolio not found'
+    })
+  }
+  
+  // Check if user has access to this portfolio
+  if (portfolio.userId.toString() !== req.user.userId) {
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied to this portfolio'
+    })
+  }
+  
+  // Check version for conflict resolution
+  if (version && portfolio.version > version) {
+    return res.status(409).json({
+      success: false,
+      message: 'Portfolio has been modified by another session',
+      currentVersion: portfolio.version,
+      portfolio: portfolio
+    })
+  }
+  
+  // Update fields if provided
+  if (blocks !== undefined) portfolio.blocks = blocks
+  if (layout) portfolio.layout = { ...portfolio.layout, ...layout }
+  if (theme) portfolio.theme = { ...portfolio.theme, ...theme }
+  if (seo) portfolio.seo = { ...portfolio.seo, ...seo }
+  if (custom_domain !== undefined) portfolio.publishing.customDomain = custom_domain
+  
+  await portfolio.save()
+  
+  // Emit real-time update via Socket.io
+  if (req.io) {
+    req.io.to(`portfolio-${req.user.userId}`).emit('portfolio-updated', {
+      portfolio: portfolio,
+      timestamp: new Date().toISOString()
+    })
+  }
+  
+  res.status(200).json({
+    success: true,
+    message: 'Portfolio updated successfully',
+    portfolio: portfolio
+  })
+}))
+
 // @desc    Get portfolio analytics
 // @route   GET /api/portfolio/analytics
 // @access  Private
@@ -394,11 +556,12 @@ router.get('/analytics', auth, asyncHandler(async (req, res) => {
   }
   
   const analytics = {
-    total_views: portfolio.analytics.total_views,
-    unique_visitors: portfolio.analytics.unique_visitors,
-    last_viewed: portfolio.analytics.last_viewed,
-    popular_blocks: portfolio.analytics.popular_blocks,
-    view_history: portfolio.analytics.view_history.slice(-30) // Last 30 days
+    views: portfolio.stats.views,
+    uniqueViews: portfolio.stats.uniqueViews,
+    lastViewed: portfolio.stats.lastViewed,
+    shares: portfolio.stats.shares,
+    status: portfolio.status,
+    publishedAt: portfolio.publishing.publishedAt
   }
   
   res.status(200).json({

@@ -312,6 +312,204 @@ const validateFileUpload = [
   handleValidationErrors
 ]
 
+// Portfolio save validation (for autosave endpoint)
+const validatePortfolioSave = [
+  body('blocks')
+    .optional()
+    .isArray()
+    .withMessage('Blocks must be an array'),
+  
+  body('blocks.*.id')
+    .optional()
+    .isString()
+    .withMessage('Block ID must be a string'),
+  
+  body('blocks.*.type')
+    .optional()
+    .isIn(['bio', 'projects', 'skills', 'blog', 'experience', 'education', 'contact'])
+    .withMessage('Block type must be one of: bio, projects, skills, blog, experience, education, contact'),
+  
+  body('blocks.*.content')
+    .optional()
+    .isObject()
+    .withMessage('Block content must be an object'),
+  
+  body('blocks.*.position')
+    .optional()
+    .isObject()
+    .withMessage('Block position must be an object'),
+  
+  body('blocks.*.position.x')
+    .optional()
+    .isNumeric()
+    .withMessage('Position X must be a number'),
+  
+  body('blocks.*.position.y')
+    .optional()
+    .isNumeric()
+    .withMessage('Position Y must be a number'),
+  
+  body('blocks.*.order')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('Block order must be a non-negative integer'),
+  
+  body('blocks.*.isVisible')
+    .optional()
+    .isBoolean()
+    .withMessage('Block visibility must be a boolean'),
+  
+  body('version')
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage('Version must be a positive integer'),
+  
+  body('layout.type')
+    .optional()
+    .isIn(['grid', 'masonry', 'single-column'])
+    .withMessage('Layout type must be grid, masonry, or single-column'),
+  
+  body('layout.columns')
+    .optional()
+    .isInt({ min: 1, max: 4 })
+    .withMessage('Layout columns must be between 1 and 4'),
+  
+  body('layout.spacing')
+    .optional()
+    .isIn(['compact', 'normal', 'spacious'])
+    .withMessage('Layout spacing must be compact, normal, or spacious'),
+  
+  body('theme.name')
+    .optional()
+    .isLength({ min: 1, max: 50 })
+    .withMessage('Theme name must be between 1 and 50 characters'),
+  
+  body('theme.primaryColor')
+    .optional()
+    .matches(/^#[0-9A-Fa-f]{6}$/)
+    .withMessage('Primary color must be a valid hex color'),
+  
+  body('theme.backgroundColor')
+    .optional()
+    .matches(/^#[0-9A-Fa-f]{6}$/)
+    .withMessage('Background color must be a valid hex color'),
+  
+  body('theme.fontFamily')
+    .optional()
+    .isLength({ min: 1, max: 50 })
+    .withMessage('Font family must be between 1 and 50 characters'),
+  
+  body('theme.customCSS')
+    .optional()
+    .isLength({ max: 10000 })
+    .withMessage('Custom CSS must not exceed 10,000 characters'),
+  
+  handleValidationErrors
+]
+
+// Portfolio ID parameter validation
+const validatePortfolioId = [
+  param('id')
+    .isMongoId()
+    .withMessage('Portfolio ID must be a valid MongoDB ObjectId'),
+  handleValidationErrors
+]
+
+// Block content validation based on type
+const validateBlockContent = (req, res, next) => {
+  const { blocks } = req.body
+  
+  if (!blocks || !Array.isArray(blocks)) {
+    return next()
+  }
+  
+  for (const block of blocks) {
+    if (!block.type || !block.content) continue
+    
+    try {
+      switch (block.type) {
+        case 'bio':
+          if (!block.content.name || typeof block.content.name !== 'string') {
+            return res.status(400).json({
+              success: false,
+              message: 'Bio block must have a name field'
+            })
+          }
+          break
+          
+        case 'projects':
+          if (!Array.isArray(block.content.projects)) {
+            return res.status(400).json({
+              success: false,
+              message: 'Projects block must have a projects array'
+            })
+          }
+          break
+          
+        case 'skills':
+          if (!Array.isArray(block.content.skills)) {
+            return res.status(400).json({
+              success: false,
+              message: 'Skills block must have a skills array'
+            })
+          }
+          break
+          
+        case 'experience':
+          if (!Array.isArray(block.content.experiences)) {
+            return res.status(400).json({
+              success: false,
+              message: 'Experience block must have an experiences array'
+            })
+          }
+          break
+      }
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid block content structure'
+      })
+    }
+  }
+  
+  next()
+}
+
+// WebSocket data validation
+const validateWebSocketData = {
+  autosave: (data) => {
+    const errors = []
+    
+    if (!data.portfolioId || typeof data.portfolioId !== 'string') {
+      errors.push('Portfolio ID is required and must be a string')
+    }
+    
+    if (!data.changes || typeof data.changes !== 'object') {
+      errors.push('Changes object is required')
+    }
+    
+    if (data.version && (!Number.isInteger(data.version) || data.version < 1)) {
+      errors.push('Version must be a positive integer')
+    }
+    
+    return errors
+  },
+  
+  syncState: (data) => {
+    const errors = []
+    
+    if (!data.portfolioId || typeof data.portfolioId !== 'string') {
+      errors.push('Portfolio ID is required and must be a string')
+    }
+    
+    if (!data.state || typeof data.state !== 'object') {
+      errors.push('State object is required')
+    }
+    
+    return errors
+  }
+}
+
 // Environment-specific validation
 const validateEnvironment = (req, res, next) => {
   if (process.env.NODE_ENV === 'production') {
@@ -322,6 +520,19 @@ const validateEnvironment = (req, res, next) => {
         message: 'Custom domain must be a valid domain in production'
       })
     }
+    
+    // Limit block content size in production
+    if (req.body.blocks && Array.isArray(req.body.blocks)) {
+      for (const block of req.body.blocks) {
+        const contentSize = JSON.stringify(block.content || {}).length
+        if (contentSize > 50000) { // 50KB limit per block
+          return res.status(400).json({
+            success: false,
+            message: 'Block content size exceeds limit (50KB per block)'
+          })
+        }
+      }
+    }
   }
   
   next()
@@ -331,6 +542,10 @@ module.exports = {
   validateGitHubCallback,
   validateUserUpdate,
   validatePortfolioUpdate,
+  validatePortfolioSave,
+  validatePortfolioId,
+  validateBlockContent,
+  validateWebSocketData,
   validateUsername,
   validateRepoParams,
   validatePagination,

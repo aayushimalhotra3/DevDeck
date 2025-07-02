@@ -65,19 +65,19 @@
 ## 🎨 Week 2: Portfolio Editor + Live Preview
 
 ### Aayushi Tasks:
-- [ ] Implement WebSocket backend logic:
-  - [ ] Connection management
-  - [ ] Real-time state synchronization
-  - [ ] Broadcast updates to connected clients
-- [ ] Create portfolio API endpoints:
-  - [ ] `POST /api/portfolio/save` - Save portfolio data
-  - [ ] `GET /api/portfolio/:id` - Get portfolio by ID
-  - [ ] `PUT /api/portfolio/:id` - Update portfolio
-- [ ] Store blocks in database as JSON:
-  - [ ] `bio`, `project`, `skills`, `experience` blocks
-  - [ ] Block positioning and styling data
-- [ ] Implement autosave functionality with debouncing
-- [ ] Add data validation and error handling
+- [x] Implement WebSocket backend logic:
+  - [x] Connection management
+  - [x] Real-time state synchronization
+  - [x] Broadcast updates to connected clients
+- [x] Create portfolio API endpoints:
+  - [x] `POST /api/portfolio/save` - Save portfolio data
+  - [x] `GET /api/portfolio/:id` - Get portfolio by ID
+  - [x] `PUT /api/portfolio/:id` - Update portfolio
+- [x] Store blocks in database as JSON:
+  - [x] `bio`, `project`, `skills`, `experience` blocks
+  - [x] Block positioning and styling data
+- [x] Implement autosave functionality with debouncing
+- [x] Add data validation and error handling
 
 ### Kathan Tasks:
 - [ ] Build `/edit` page with drag-and-drop functionality:
