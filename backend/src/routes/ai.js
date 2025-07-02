@@ -1,15 +1,18 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth')
+const { auth } = require('../middleware/auth')
 const asyncHandler = require('../middleware/asyncHandler')
 const Portfolio = require('../models/Portfolio')
 const User = require('../models/User')
 const OpenAI = require('openai')
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-})
+// Initialize OpenAI client only if API key is available
+let openai = null
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  })
+}
 
 // @desc    Generate AI content suggestions for portfolio
 // @route   POST /api/ai/suggestions

@@ -160,12 +160,6 @@ const compressionMiddleware = compression({
 
 // Database optimization
 const optimizeDatabase = () => {
-  // Connection pooling
-  mongoose.set('maxPoolSize', 10)
-  mongoose.set('serverSelectionTimeoutMS', 5000)
-  mongoose.set('socketTimeoutMS', 45000
-  mongoose.set('bufferMaxEntries', 0)
-  
   // Enable query result caching
   mongoose.set('bufferCommands', false)
   

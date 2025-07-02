@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth')
+const { auth } = require('../middleware/auth')
 const asyncHandler = require('../middleware/asyncHandler')
 const Portfolio = require('../models/Portfolio')
 const User = require('../models/User')
@@ -13,7 +13,7 @@ const path = require('path')
 // @access  Private
 router.get('/json', auth, asyncHandler(async (req, res) => {
   try {
-    const portfolio = await Portfolio.findByUserId(req.user.id).populate('userId', 'username name email avatar_url bio location website github twitter linkedin')
+    const portfolio = await Portfolio.findByUserId(req.user.id)
     
     if (!portfolio) {
       return res.status(404).json({
@@ -79,7 +79,7 @@ router.get('/json', auth, asyncHandler(async (req, res) => {
 // @access  Private
 router.get('/markdown', auth, asyncHandler(async (req, res) => {
   try {
-    const portfolio = await Portfolio.findByUserId(req.user.id).populate('userId', 'username name email avatar_url bio location website github twitter linkedin')
+    const portfolio = await Portfolio.findByUserId(req.user.id)
     
     if (!portfolio) {
       return res.status(404).json({
@@ -190,6 +190,8 @@ router.get('/markdown', auth, asyncHandler(async (req, res) => {
 // @desc    Export portfolio to PDF
 // @route   GET /api/export/pdf
 // @access  Private
+// Temporarily disabled due to Puppeteer installation issues
+/*
 router.get('/pdf', auth, asyncHandler(async (req, res) => {
   let browser
   
@@ -408,5 +410,6 @@ router.get('/pdf', auth, asyncHandler(async (req, res) => {
     })
   }
 }))
+*/
 
 module.exports = router

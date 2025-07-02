@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const auth = require('../middleware/auth')
+const { auth } = require('../middleware/auth')
 const asyncHandler = require('../middleware/asyncHandler')
 const Portfolio = require('../models/Portfolio')
 const User = require('../models/User')
