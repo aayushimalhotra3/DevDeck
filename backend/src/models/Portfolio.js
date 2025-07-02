@@ -8,7 +8,7 @@ const blockSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['bio', 'projects', 'skills', 'blog', 'experience', 'education', 'contact']
+    enum: ['bio', 'projects', 'skills', 'blog', 'experience', 'education', 'contact', 'testimonials', 'resume']
   },
   content: {
     type: mongoose.Schema.Types.Mixed,

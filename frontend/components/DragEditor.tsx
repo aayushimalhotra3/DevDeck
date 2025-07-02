@@ -12,7 +12,7 @@ import { X, GripVertical } from 'lucide-react';
 
 interface PortfolioBlock {
   id: string;
-  type: 'bio' | 'projects' | 'skills' | 'blog';
+  type: 'bio' | 'projects' | 'skills' | 'blog' | 'testimonials' | 'contact' | 'resume';
   content: any;
   position: { x: number; y: number };
 }
@@ -205,6 +205,126 @@ function DraggableBlock({
           </div>
         );
 
+      case 'testimonials':
+        return (
+          <div className="space-y-4">
+            <Input
+              placeholder="Client/Colleague name"
+              value={block.content?.name || ''}
+              onChange={e =>
+                onUpdateBlock(block.id, {
+                  ...block.content,
+                  name: e.target.value,
+                })
+              }
+            />
+            <Input
+              placeholder="Their position/company"
+              value={block.content?.position || ''}
+              onChange={e =>
+                onUpdateBlock(block.id, {
+                  ...block.content,
+                  position: e.target.value,
+                })
+              }
+            />
+            <Textarea
+              placeholder="What they said about you..."
+              value={block.content?.testimonial || ''}
+              onChange={e =>
+                onUpdateBlock(block.id, {
+                  ...block.content,
+                  testimonial: e.target.value,
+                })
+              }
+              rows={3}
+            />
+          </div>
+        );
+
+      case 'contact':
+        return (
+          <div className="space-y-4">
+            <Input
+              placeholder="Email address"
+              value={block.content?.email || ''}
+              onChange={e =>
+                onUpdateBlock(block.id, {
+                  ...block.content,
+                  email: e.target.value,
+                })
+              }
+            />
+            <Input
+              placeholder="Phone number (optional)"
+              value={block.content?.phone || ''}
+              onChange={e =>
+                onUpdateBlock(block.id, {
+                  ...block.content,
+                  phone: e.target.value,
+                })
+              }
+            />
+            <Input
+              placeholder="LinkedIn URL"
+              value={block.content?.linkedin || ''}
+              onChange={e =>
+                onUpdateBlock(block.id, {
+                  ...block.content,
+                  linkedin: e.target.value,
+                })
+              }
+            />
+            <Input
+              placeholder="Twitter/X URL"
+              value={block.content?.twitter || ''}
+              onChange={e =>
+                onUpdateBlock(block.id, {
+                  ...block.content,
+                  twitter: e.target.value,
+                })
+              }
+            />
+          </div>
+        );
+
+      case 'resume':
+        return (
+          <div className="space-y-4">
+            <Input
+              placeholder="Resume/CV title"
+              value={block.content?.title || ''}
+              onChange={e =>
+                onUpdateBlock(block.id, {
+                  ...block.content,
+                  title: e.target.value,
+                })
+              }
+            />
+            <Input
+              placeholder="Download URL (PDF link)"
+              value={block.content?.downloadUrl || ''}
+              onChange={e =>
+                onUpdateBlock(block.id, {
+                  ...block.content,
+                  downloadUrl: e.target.value,
+                })
+              }
+            />
+            <Textarea
+              placeholder="Brief summary or highlights..."
+              value={block.content?.summary || ''}
+              onChange={e =>
+                onUpdateBlock(block.id, {
+                  ...block.content,
+                  summary: e.target.value,
+                })
+              }
+              rows={2}
+            />
+          </div>
+        );
+
       default:
         return <div>Unknown block type</div>;
     }
@@ -220,6 +340,12 @@ function DraggableBlock({
         return '💻';
       case 'blog':
         return '📚';
+      case 'testimonials':
+        return '💬';
+      case 'contact':
+        return '📧';
+      case 'resume':
+        return '📄';
       default:
         return '📄';
     }
@@ -327,6 +453,15 @@ export function DragEditor({
               <Button onClick={() => addBlock('blog')} variant="outline">
                 📚 Add Blog
               </Button>
+              <Button onClick={() => addBlock('testimonials')} variant="outline">
+                💬 Add Testimonials
+              </Button>
+              <Button onClick={() => addBlock('contact')} variant="outline">
+                📧 Add Contact
+              </Button>
+              <Button onClick={() => addBlock('resume')} variant="outline">
+                📄 Add Resume
+              </Button>
             </div>
           </div>
         ) : (
@@ -374,6 +509,27 @@ export function DragEditor({
                   size="sm"
                 >
                   📚 Blog
+                </Button>
+                <Button
+                  onClick={() => addBlock('testimonials')}
+                  variant="outline"
+                  size="sm"
+                >
+                  💬 Testimonials
+                </Button>
+                <Button
+                  onClick={() => addBlock('contact')}
+                  variant="outline"
+                  size="sm"
+                >
+                  📧 Contact
+                </Button>
+                <Button
+                  onClick={() => addBlock('resume')}
+                  variant="outline"
+                  size="sm"
+                >
+                  📄 Resume
                 </Button>
               </div>
             </div>

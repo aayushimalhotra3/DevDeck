@@ -6,12 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { X, User, Code, Briefcase, BookOpen } from 'lucide-react';
+import { X, User, Code, Briefcase, BookOpen, MessageSquare, Mail, FileText } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface PortfolioBlock {
   id: string;
-  type: 'bio' | 'skills' | 'projects' | 'blog';
+  type: 'bio' | 'skills' | 'projects' | 'blog' | 'testimonials' | 'contact' | 'resume';
   content: Record<string, any>;
   position: { x: number; y: number };
 }
@@ -27,6 +27,9 @@ const blockIcons = {
   skills: Code,
   projects: Briefcase,
   blog: BookOpen,
+  testimonials: MessageSquare,
+  contact: Mail,
+  resume: FileText,
 };
 
 const blockLabels = {
@@ -34,6 +37,9 @@ const blockLabels = {
   skills: 'Skills Block',
   projects: 'Projects Block',
   blog: 'Blog Block',
+  testimonials: 'Testimonials Block',
+  contact: 'Contact Form',
+  resume: 'Resume Block',
 };
 
 export function PropertyPanel({ block, onUpdateBlock, onClose }: PropertyPanelProps) {
@@ -314,6 +320,189 @@ export function PropertyPanel({ block, onUpdateBlock, onClose }: PropertyPanelPr
     );
   };
 
+  const renderTestimonialsProperties = () => {
+    const testimonials = localContent.testimonials || [];
+    
+    const addTestimonial = () => {
+      const newTestimonials = [...testimonials, { name: '', role: '', company: '', content: '', avatar: '' }];
+      handleContentChange('testimonials', newTestimonials);
+    };
+
+    const updateTestimonial = (index: number, field: string, value: string) => {
+      const newTestimonials = testimonials.map((testimonial: any, i: number) => 
+        i === index ? { ...testimonial, [field]: value } : testimonial
+      );
+      handleContentChange('testimonials', newTestimonials);
+    };
+
+    const removeTestimonial = (index: number) => {
+      const newTestimonials = testimonials.filter((_: any, i: number) => i !== index);
+      handleContentChange('testimonials', newTestimonials);
+    };
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Label>Testimonials</Label>
+          <Button size="sm" onClick={addTestimonial}>
+            Add Testimonial
+          </Button>
+        </div>
+        <div className="space-y-4">
+          {testimonials.map((testimonial: any, index: number) => (
+            <Card key={index} className="p-3">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-medium">Testimonial {index + 1}</h4>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removeTestimonial(index)}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <Input
+                  value={testimonial.name || ''}
+                  onChange={(e) => updateTestimonial(index, 'name', e.target.value)}
+                  placeholder="Client name"
+                />
+                <Input
+                  value={testimonial.role || ''}
+                  onChange={(e) => updateTestimonial(index, 'role', e.target.value)}
+                  placeholder="Job title"
+                />
+                <Input
+                  value={testimonial.company || ''}
+                  onChange={(e) => updateTestimonial(index, 'company', e.target.value)}
+                  placeholder="Company name"
+                />
+                <Textarea
+                  value={testimonial.content || ''}
+                  onChange={(e) => updateTestimonial(index, 'content', e.target.value)}
+                  placeholder="Testimonial content"
+                  rows={3}
+                />
+                <Input
+                  value={testimonial.avatar || ''}
+                  onChange={(e) => updateTestimonial(index, 'avatar', e.target.value)}
+                  placeholder="Avatar URL (optional)"
+                />
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderContactProperties = () => {
+    return (
+      <div className="space-y-4">
+        <div>
+          <Label htmlFor="contact-title">Form Title</Label>
+          <Input
+            id="contact-title"
+            value={localContent.title || ''}
+            onChange={(e) => handleContentChange('title', e.target.value)}
+            placeholder="Get in Touch"
+          />
+        </div>
+        <div>
+          <Label htmlFor="contact-description">Description</Label>
+          <Textarea
+            id="contact-description"
+            value={localContent.description || ''}
+            onChange={(e) => handleContentChange('description', e.target.value)}
+            placeholder="Feel free to reach out for collaborations or just a friendly hello!"
+            rows={3}
+          />
+        </div>
+        <div>
+          <Label htmlFor="contact-email">Your Email</Label>
+          <Input
+            id="contact-email"
+            type="email"
+            value={localContent.email || ''}
+            onChange={(e) => handleContentChange('email', e.target.value)}
+            placeholder="your.email@example.com"
+          />
+        </div>
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="show-phone"
+            checked={localContent.showPhone || false}
+            onChange={(e) => handleContentChange('showPhone', e.target.checked)}
+          />
+          <Label htmlFor="show-phone">Include phone field</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="show-company"
+            checked={localContent.showCompany || false}
+            onChange={(e) => handleContentChange('showCompany', e.target.checked)}
+          />
+          <Label htmlFor="show-company">Include company field</Label>
+        </div>
+      </div>
+    );
+  };
+
+  const renderResumeProperties = () => {
+    return (
+      <div className="space-y-4">
+        <div>
+          <Label htmlFor="resume-title">Section Title</Label>
+          <Input
+            id="resume-title"
+            value={localContent.title || ''}
+            onChange={(e) => handleContentChange('title', e.target.value)}
+            placeholder="Resume"
+          />
+        </div>
+        <div>
+          <Label htmlFor="resume-description">Description</Label>
+          <Textarea
+            id="resume-description"
+            value={localContent.description || ''}
+            onChange={(e) => handleContentChange('description', e.target.value)}
+            placeholder="Download my resume to learn more about my experience"
+            rows={2}
+          />
+        </div>
+        <div>
+          <Label htmlFor="resume-url">Resume URL</Label>
+          <Input
+            id="resume-url"
+            value={localContent.resumeUrl || ''}
+            onChange={(e) => handleContentChange('resumeUrl', e.target.value)}
+            placeholder="https://example.com/resume.pdf"
+          />
+        </div>
+        <div>
+          <Label htmlFor="resume-filename">File Name</Label>
+          <Input
+            id="resume-filename"
+            value={localContent.filename || ''}
+            onChange={(e) => handleContentChange('filename', e.target.value)}
+            placeholder="John_Doe_Resume.pdf"
+          />
+        </div>
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="show-preview"
+            checked={localContent.showPreview || false}
+            onChange={(e) => handleContentChange('showPreview', e.target.checked)}
+          />
+          <Label htmlFor="show-preview">Show preview button</Label>
+        </div>
+      </div>
+    );
+  };
+
   const renderProperties = () => {
     switch (block.type) {
       case 'bio':
@@ -324,6 +513,12 @@ export function PropertyPanel({ block, onUpdateBlock, onClose }: PropertyPanelPr
         return renderProjectsProperties();
       case 'blog':
         return renderBlogProperties();
+      case 'testimonials':
+        return renderTestimonialsProperties();
+      case 'contact':
+        return renderContactProperties();
+      case 'resume':
+        return renderResumeProperties();
       default:
         return <p className="text-muted-foreground">No properties available for this block type.</p>;
     }

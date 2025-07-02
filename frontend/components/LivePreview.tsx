@@ -10,12 +10,12 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Github, ExternalLink, Globe } from 'lucide-react';
+import { Github, ExternalLink, Globe, User, Mail, MapPin, FileText, Download } from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
 
 interface PortfolioBlock {
   id: string;
-  type: 'bio' | 'projects' | 'skills' | 'blog';
+  type: 'bio' | 'projects' | 'skills' | 'blog' | 'testimonials' | 'contact' | 'resume';
   content: any;
   position: { x: number; y: number };
 }
@@ -181,6 +181,190 @@ export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProp
                   Add your blog URL to display your latest posts...
                 </p>
               )}
+            </CardContent>
+          </Card>
+        );
+
+      case 'testimonials':
+        return (
+          <Card key={block.id} className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                💬 Testimonials
+              </CardTitle>
+              <CardDescription>What people say about my work</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {(block.content?.testimonials || []).map((testimonial: any, index: number) => (
+                  <div key={index} className="border rounded-lg p-6 space-y-4">
+                    <div className="flex items-start space-x-4">
+                      {testimonial.avatar ? (
+                        <img
+                          src={testimonial.avatar}
+                          alt={testimonial.name}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                          <User className="w-6 h-6 text-gray-400" />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <h4 className="font-semibold">{testimonial.name}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {testimonial.role} {testimonial.company && `at ${testimonial.company}`}
+                        </p>
+                      </div>
+                    </div>
+                    <blockquote className="text-muted-foreground italic">
+                      "{testimonial.content}"
+                    </blockquote>
+                  </div>
+                ))}
+              </div>
+              {(!block.content?.testimonials || block.content.testimonials.length === 0) && (
+                <p className="text-muted-foreground text-center py-4">
+                  Add testimonials to showcase client feedback...
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        );
+
+      case 'contact':
+        return (
+          <Card key={block.id} className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                📧 {block.content?.title || 'Get in Touch'}
+              </CardTitle>
+              <CardDescription>
+                {block.content?.description || 'Let\'s work together'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium mb-1">
+                    Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Your name"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium mb-1">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="your.email@example.com"
+                  />
+                </div>
+                {block.content?.showPhone && (
+                  <div>
+                    <label htmlFor="phone" className="block text-sm font-medium mb-1">
+                      Phone
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Your phone number"
+                    />
+                  </div>
+                )}
+                {block.content?.showCompany && (
+                  <div>
+                    <label htmlFor="company" className="block text-sm font-medium mb-1">
+                      Company
+                    </label>
+                    <input
+                      type="text"
+                      id="company"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Your company"
+                    />
+                  </div>
+                )}
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium mb-1">
+                    Message *
+                  </label>
+                  <textarea
+                    id="message"
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Your message"
+                  ></textarea>
+                </div>
+                <Button type="submit" className="w-full">
+                  Send Message
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        );
+
+      case 'resume':
+        return (
+          <Card key={block.id} className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                📄 {block.content?.title || 'Resume'}
+              </CardTitle>
+              <CardDescription>
+                {block.content?.description || 'Download my resume'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-blue-100 rounded-full mx-auto flex items-center justify-center">
+                  <FileText className="w-8 h-8 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">{block.content?.filename || 'Resume.pdf'}</h3>
+                  <p className="text-sm text-muted-foreground">PDF Document</p>
+                </div>
+                <div className="flex gap-2 justify-center">
+                  {block.content?.resumeUrl ? (
+                    <>
+                      <Button variant="default" size="sm" asChild>
+                        <a
+                          href={block.content.resumeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download
+                        </a>
+                      </Button>
+                      {block.content?.showPreview && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a
+                            href={block.content.resumeUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Preview
+                          </a>
+                        </Button>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      Add your resume URL to enable downloads...
+                    </p>
+                  )}
+                </div>
+              </div>
             </CardContent>
           </Card>
         );

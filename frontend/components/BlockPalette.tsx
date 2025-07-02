@@ -3,9 +3,9 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { User, Code, Briefcase, BookOpen, Plus, Github, Download } from 'lucide-react';
+import { User, Code, Briefcase, BookOpen, Plus, Github, Download, MessageSquare, Mail, FileText } from 'lucide-react';
 
-type BlockType = 'bio' | 'skills' | 'projects' | 'blog';
+type BlockType = 'bio' | 'skills' | 'projects' | 'blog' | 'testimonials' | 'contact' | 'resume';
 
 interface BlockPaletteProps {
   onAddBlock: (type: BlockType) => void;
@@ -40,6 +40,27 @@ const blockTypes = [
     description: 'Articles and blog posts',
     icon: BookOpen,
     color: 'bg-orange-50 border-orange-200 hover:bg-orange-100',
+  },
+  {
+    type: 'testimonials' as BlockType,
+    label: 'Testimonials Block',
+    description: 'Client and colleague testimonials',
+    icon: MessageSquare,
+    color: 'bg-pink-50 border-pink-200 hover:bg-pink-100',
+  },
+  {
+    type: 'contact' as BlockType,
+    label: 'Contact Form',
+    description: 'Contact form for visitors',
+    icon: Mail,
+    color: 'bg-cyan-50 border-cyan-200 hover:bg-cyan-100',
+  },
+  {
+    type: 'resume' as BlockType,
+    label: 'Resume Block',
+    description: 'Upload and display resume',
+    icon: FileText,
+    color: 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100',
   },
 ];
 
