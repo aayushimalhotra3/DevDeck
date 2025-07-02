@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import type { DragSourceMonitor, DropTargetMonitor } from 'react-dnd';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -43,7 +44,7 @@ function DraggableBlock({
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.BLOCK,
     item: { index },
-    collect: monitor => ({
+    collect: (monitor: DragSourceMonitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
@@ -56,6 +57,7 @@ function DraggableBlock({
         item.index = index;
       }
     },
+    collect: (monitor: DropTargetMonitor) => ({}),
   });
 
   const renderBlockContent = () => {
