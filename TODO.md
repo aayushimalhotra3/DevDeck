@@ -99,17 +99,20 @@
 ## 🔍 Week 3: GitHub Integration
 
 ### Aayushi Tasks:
-- [ ] Create GitHub API integration routes:
-  - [ ] `GET /api/github/repos` - Fetch user repositories
-  - [ ] `GET /api/github/repos/pinned` - Get pinned repositories
-  - [ ] `GET /api/github/user` - Get GitHub user data
-- [ ] Parse repository data:
-  - [ ] README content extraction
-  - [ ] Repository metadata (stars, forks, language)
-  - [ ] Last updated timestamps
-- [ ] Format data into `project` block schema
-- [ ] Implement caching for GitHub API responses
-- [ ] Add rate limiting for GitHub API calls
+ - [x] Create GitHub API integration routes:
+   - [x] `GET /api/github/repos` - Fetch user repositories
+   - [x] `GET /api/github/repos/pinned` - Get pinned repositories
+   - [x] `GET /api/github/user` - Get GitHub user data
+   - [x] `GET /api/github/repos/projects` - Get repositories formatted as project blocks
+   - [x] `GET /api/github/repos/:owner/:repo` - Get specific repository details
+ - [x] Parse repository data:
+   - [x] README content extraction
+   - [x] Repository metadata (stars, forks, language)
+   - [x] Last updated timestamps
+   - [x] Language statistics and percentages
+ - [x] Format data into `project` block schema
+ - [x] Implement caching for GitHub API responses
+ - [x] Add rate limiting for GitHub API calls
 
 ### Kathan Tasks:
 - [ ] Build "Import from GitHub" UI in `/edit`:
