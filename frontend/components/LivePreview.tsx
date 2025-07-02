@@ -22,9 +22,10 @@ interface PortfolioBlock {
 
 interface LivePreviewProps {
   blocks: PortfolioBlock[];
+  previewMode?: 'desktop' | 'tablet' | 'mobile';
 }
 
-export function LivePreview({ blocks }: LivePreviewProps) {
+export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -189,11 +190,41 @@ export function LivePreview({ blocks }: LivePreviewProps) {
     }
   };
 
+  const getPreviewContainerClass = () => {
+    const baseClass = "mx-auto transition-all duration-300";
+    switch (previewMode) {
+      case 'mobile':
+        return `${baseClass} max-w-sm`;
+      case 'tablet':
+        return `${baseClass} max-w-2xl`;
+      case 'desktop':
+      default:
+        return `${baseClass} max-w-4xl`;
+    }
+  };
+
+  const getPreviewModeLabel = () => {
+    switch (previewMode) {
+      case 'mobile':
+        return '📱 Mobile View (375px)';
+      case 'tablet':
+        return '📱 Tablet View (768px)';
+      case 'desktop':
+      default:
+        return '🖥️ Desktop View (1024px)';
+    }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className={getPreviewContainerClass()}>
       {/* Connection Status */}
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Live Preview</h2>
+        <div className="flex items-center space-x-3">
+          <h2 className="text-xl font-semibold">Live Preview</h2>
+          <Badge variant="outline" className="text-xs">
+            {getPreviewModeLabel()}
+          </Badge>
+        </div>
         <div className="flex items-center space-x-2">
           <div
             className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
@@ -205,26 +236,38 @@ export function LivePreview({ blocks }: LivePreviewProps) {
       </div>
 
       {/* Portfolio Preview */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 rounded-lg p-8 min-h-96">
+      <div className={`bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 rounded-lg min-h-96 ${
+        previewMode === 'mobile' ? 'p-4' : previewMode === 'tablet' ? 'p-6' : 'p-8'
+      }`}>
         {blocks.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">🎨</div>
-            <h3 className="text-xl font-semibold mb-2">
+            <div className={`mb-4 ${
+              previewMode === 'mobile' ? 'text-4xl' : 'text-6xl'
+            }`}>🎨</div>
+            <h3 className={`font-semibold mb-2 ${
+              previewMode === 'mobile' ? 'text-lg' : 'text-xl'
+            }`}>
               Your Portfolio Preview
             </h3>
-            <p className="text-muted-foreground">
+            <p className={`text-muted-foreground ${
+              previewMode === 'mobile' ? 'text-sm' : 'text-base'
+            }`}>
               Add blocks in the editor to see your portfolio come to life!
             </p>
           </div>
         ) : (
-          <div className="space-y-6">{blocks.map(renderBlock)}</div>
+          <div className={`space-y-6 ${
+            previewMode === 'mobile' ? 'space-y-4' : 'space-y-6'
+          }`}>{blocks.map(renderBlock)}</div>
         )}
       </div>
 
       {/* Preview Info */}
       <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-        <p className="text-sm text-blue-700 dark:text-blue-300">
-          💡 This is how your portfolio will look to visitors. Changes are
+        <p className={`text-blue-700 dark:text-blue-300 ${
+          previewMode === 'mobile' ? 'text-xs' : 'text-sm'
+        }`}>
+          💡 This is how your portfolio will look to visitors in {previewMode} view. Changes are
           updated in real-time!
         </p>
       </div>

@@ -20,6 +20,8 @@ interface PortfolioBlock {
 interface DragEditorProps {
   blocks: PortfolioBlock[];
   onBlocksUpdate: (blocks: PortfolioBlock[]) => void;
+  selectedBlockId?: string;
+  onBlockSelect?: (blockId: string | null) => void;
 }
 
 const ItemTypes = {
@@ -32,6 +34,8 @@ interface DraggableBlockProps {
   moveBlock: (dragIndex: number, hoverIndex: number) => void;
   onUpdateBlock: (id: string, content: any) => void;
   onDeleteBlock: (id: string) => void;
+  isSelected?: boolean;
+  onSelect?: (blockId: string) => void;
 }
 
 function DraggableBlock({
@@ -40,6 +44,8 @@ function DraggableBlock({
   moveBlock,
   onUpdateBlock,
   onDeleteBlock,
+  isSelected = false,
+  onSelect,
 }: DraggableBlockProps) {
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.BLOCK,
@@ -227,17 +233,30 @@ function DraggableBlock({
       }}
       className={`mb-4 ${isDragging ? 'opacity-50' : ''}`}
     >
-      <Card>
+      <Card 
+        className={`cursor-pointer transition-all duration-200 ${
+          isSelected ? 'ring-2 ring-blue-500 shadow-md' : 'hover:shadow-sm'
+        }`}
+        onClick={() => onSelect?.(block.id)}
+      >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium flex items-center">
             <GripVertical className="w-4 h-4 mr-2 cursor-move" />
             {getBlockIcon()}{' '}
             {block.type.charAt(0).toUpperCase() + block.type.slice(1)} Block
+            {isSelected && (
+              <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                Selected
+              </span>
+            )}
           </CardTitle>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onDeleteBlock(block.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteBlock(block.id);
+            }}
           >
             <X className="w-4 h-4" />
           </Button>
@@ -248,7 +267,12 @@ function DraggableBlock({
   );
 }
 
-export function DragEditor({ blocks, onBlocksUpdate }: DragEditorProps) {
+export function DragEditor({ 
+  blocks, 
+  onBlocksUpdate, 
+  selectedBlockId, 
+  onBlockSelect 
+}: DragEditorProps) {
   const moveBlock = useCallback(
     (dragIndex: number, hoverIndex: number) => {
       const newBlocks = [...blocks];
@@ -315,6 +339,8 @@ export function DragEditor({ blocks, onBlocksUpdate }: DragEditorProps) {
                 moveBlock={moveBlock}
                 onUpdateBlock={updateBlock}
                 onDeleteBlock={deleteBlock}
+                isSelected={selectedBlockId === block.id}
+                onSelect={onBlockSelect}
               />
             ))}
 
