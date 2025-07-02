@@ -16,7 +16,7 @@ import { Monitor, Tablet, Smartphone, Save, Undo, Redo } from 'lucide-react';
 
 interface PortfolioBlock {
   id: string;
-  type: 'bio' | 'projects' | 'skills' | 'blog';
+  type: 'bio' | 'projects' | 'skills' | 'blog' | 'testimonials' | 'contact' | 'resume';
   content: any;
   position: { x: number; y: number };
 }
@@ -291,7 +291,7 @@ export default function EditPortfolio() {
         {/* Block Palette Sidebar */}
         <div className="w-64 border-r bg-muted/30 p-4 overflow-y-auto">
           <BlockPalette 
-            onAddBlock={(type: 'bio' | 'skills' | 'projects' | 'blog') => {
+            onAddBlock={(type: 'bio' | 'skills' | 'projects' | 'blog' | 'testimonials' | 'contact' | 'resume') => {
               const newBlock: PortfolioBlock = {
                 id: `block-${Date.now()}`,
                 type,

@@ -872,4 +872,155 @@ router.get('/analytics', auth, asyncHandler(async (req, res) => {
   }
 }))
 
+// @desc    Get public portfolios for browsing
+// @route   GET /api/portfolio/public
+// @access  Public
+router.get('/public', asyncHandler(async (req, res) => {
+  try {
+    const {
+      category = 'all',
+      sort = 'recent',
+      search = '',
+      page = 1,
+      limit = 12
+    } = req.query;
+
+    // Build query for published portfolios
+    let query = {
+      status: 'published',
+      'publishing.isIndexable': true,
+      'publishing.passwordProtected': false
+    };
+
+    // Add search functionality
+    if (search) {
+      const searchRegex = new RegExp(search, 'i');
+      query.$or = [
+        { 'seo.title': searchRegex },
+        { 'seo.description': searchRegex },
+        { 'seo.keywords': { $in: [searchRegex] } }
+      ];
+    }
+
+    // Build sort options
+    let sortOptions = {};
+    switch (sort) {
+      case 'popular':
+        sortOptions = { 'stats.shares': -1, 'stats.views': -1 };
+        break;
+      case 'views':
+        sortOptions = { 'stats.views': -1 };
+        break;
+      case 'recent':
+      default:
+        sortOptions = { 'publishing.publishedAt': -1 };
+        break;
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const portfolios = await Portfolio.find(query)
+      .populate('userId', 'username name avatar_url')
+      .select('-publishing.password -__v')
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(parseInt(limit))
+      .lean();
+
+    const total = await Portfolio.countDocuments(query);
+    const totalPages = Math.ceil(total / parseInt(limit));
+
+    res.json({
+      portfolios,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalItems: total,
+        hasNext: parseInt(page) < totalPages,
+        hasPrev: parseInt(page) > 1
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching public portfolios:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}));
+
+// @desc    Clone a portfolio
+// @route   POST /api/portfolio/clone
+// @access  Private
+router.post('/clone', auth, asyncHandler(async (req, res) => {
+  try {
+    const { portfolioId } = req.body;
+    const userId = req.user.userId;
+
+    if (!portfolioId) {
+      return res.status(400).json({ message: 'Portfolio ID is required' });
+    }
+
+    // Find the source portfolio
+    const sourcePortfolio = await Portfolio.findById(portfolioId);
+    if (!sourcePortfolio) {
+      return res.status(404).json({ message: 'Portfolio not found' });
+    }
+
+    // Check if portfolio is public
+    if (sourcePortfolio.status !== 'published' || !sourcePortfolio.publishing.isIndexable) {
+      return res.status(403).json({ message: 'Portfolio is not publicly available for cloning' });
+    }
+
+    // Check if user already has a portfolio
+    const existingPortfolio = await Portfolio.findByUserId(userId);
+    if (existingPortfolio) {
+      return res.status(400).json({ 
+        message: 'You already have a portfolio. Delete your current portfolio first to clone a new one.' 
+      });
+    }
+
+    // Create cloned portfolio
+    const clonedPortfolio = new Portfolio({
+      user: userId,
+      blocks: sourcePortfolio.blocks.map(block => ({
+        ...block.toObject(),
+        id: `block_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` // Generate new IDs for blocks
+      })),
+      layout: sourcePortfolio.layout,
+      theme: sourcePortfolio.theme,
+      seo: {
+        title: '',
+        description: '',
+        keywords: [],
+        ogImage: ''
+      },
+      status: 'draft',
+      version: 1,
+      stats: {
+        views: 0,
+        uniqueViews: 0,
+        shares: 0
+      },
+      publishing: {
+        isIndexable: true,
+        passwordProtected: false
+      }
+    });
+
+    await clonedPortfolio.save();
+
+    // Increment share count for source portfolio
+    await Portfolio.findByIdAndUpdate(portfolioId, {
+      $inc: { 'stats.shares': 1 }
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Portfolio cloned successfully',
+      portfolio: clonedPortfolio
+    });
+  } catch (error) {
+    console.error('Error cloning portfolio:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}));
+
 module.exports = router
