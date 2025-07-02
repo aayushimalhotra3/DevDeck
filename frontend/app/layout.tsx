@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import SessionProvider from '@/components/providers/SessionProvider';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -18,12 +19,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <SessionProvider>
-          <div className="min-h-screen bg-background">{children}</div>
-          <Toaster />
-        </SessionProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SessionProvider>
+            {children}
+            <Toaster />
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
