@@ -14,6 +14,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { Copy, Share2, QrCode, ExternalLink, Check } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { QRCodeDialog } from '@/components/ui/qr-code-dialog';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function Settings() {
   const [profile, setProfile] = useState({
@@ -32,6 +37,46 @@ export default function Settings() {
     showLocation: true,
     allowIndexing: true,
   });
+
+  const [theme, setTheme] = useState({
+    colorScheme: 'blue',
+    fontFamily: 'inter',
+    borderRadius: 'medium',
+  });
+  const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
+  const { data: session } = useSession();
+
+  const portfolioUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/preview/${session?.user?.username || 'your-username'}`;
+
+  const handleCopyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(portfolioUrl);
+      setCopied(true);
+      toast({
+        title: "URL copied!",
+        description: "Portfolio URL has been copied to clipboard.",
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      toast({
+        title: "Failed to copy",
+        description: "Could not copy URL to clipboard.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSocialShare = (platform: string) => {
+    const text = "Check out my portfolio!";
+    const url = portfolioUrl;
+    
+    if (platform === 'twitter') {
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+    } else if (platform === 'linkedin') {
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+    }
+  };
 
   const handleProfileSave = async () => {
     try {
@@ -87,9 +132,10 @@ export default function Settings() {
       </div>
 
       <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="privacy">Privacy</TabsTrigger>
+          <TabsTrigger value="theme">Theme</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
           <TabsTrigger value="account">Account</TabsTrigger>
         </TabsList>
@@ -265,7 +311,164 @@ export default function Settings() {
                 />
               </div>
 
+              <div className="border-t pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-medium mb-2">Portfolio URL</h3>
+                    <div className="flex items-center space-x-2">
+                      <Input
+                        value={portfolioUrl}
+                        readOnly
+                        className="flex-1"
+                      />
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={handleCopyUrl}
+                      >
+                        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => window.open(portfolioUrl, '_blank')}
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-medium mb-2">Share Portfolio</h3>
+                    <div className="flex flex-wrap gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleSocialShare('twitter')}
+                      >
+                        <Share2 className="h-4 w-4 mr-2" />
+                        Share on Twitter
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleSocialShare('linkedin')}
+                      >
+                        <Share2 className="h-4 w-4 mr-2" />
+                        Share on LinkedIn
+                      </Button>
+                      <QRCodeDialog url={portfolioUrl}>
+                        <Button variant="outline" size="sm">
+                          <QrCode className="h-4 w-4 mr-2" />
+                          Generate QR Code
+                        </Button>
+                      </QRCodeDialog>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <Button onClick={handlePrivacySave}>Save Privacy Settings</Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="theme" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Theme Settings</CardTitle>
+              <CardDescription>
+                Customize the appearance of your portfolio
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Theme Mode</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Choose between light, dark, or system theme
+                  </p>
+                </div>
+                <ThemeToggle />
+              </div>
+
+              <div className="space-y-3">
+                <Label>Color Scheme</Label>
+                <div className="grid grid-cols-6 gap-2">
+                  {[
+                    { name: 'Blue', value: 'blue', color: 'bg-blue-500' },
+                    { name: 'Purple', value: 'purple', color: 'bg-purple-500' },
+                    { name: 'Green', value: 'green', color: 'bg-green-500' },
+                    { name: 'Orange', value: 'orange', color: 'bg-orange-500' },
+                    { name: 'Red', value: 'red', color: 'bg-red-500' },
+                    { name: 'Pink', value: 'pink', color: 'bg-pink-500' },
+                  ].map((color) => (
+                    <button
+                      key={color.value}
+                      onClick={() => setTheme({ ...theme, colorScheme: color.value })}
+                      className={`w-12 h-12 rounded-lg ${color.color} border-2 ${
+                        theme.colorScheme === color.value
+                          ? 'border-foreground'
+                          : 'border-transparent'
+                      } hover:scale-105 transition-transform`}
+                      title={color.name}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label>Font Family</Label>
+                <div className="grid grid-cols-1 gap-2">
+                  {[
+                    { name: 'Inter', value: 'inter', preview: 'The quick brown fox jumps' },
+                    { name: 'Roboto', value: 'roboto', preview: 'The quick brown fox jumps' },
+                    { name: 'Open Sans', value: 'opensans', preview: 'The quick brown fox jumps' },
+                    { name: 'Poppins', value: 'poppins', preview: 'The quick brown fox jumps' },
+                  ].map((font) => (
+                    <button
+                      key={font.value}
+                      onClick={() => setTheme({ ...theme, fontFamily: font.value })}
+                      className={`p-3 text-left border rounded-lg hover:bg-accent ${
+                        theme.fontFamily === font.value
+                          ? 'border-primary bg-accent'
+                          : 'border-border'
+                      }`}
+                    >
+                      <div className="font-medium">{font.name}</div>
+                      <div className="text-sm text-muted-foreground">{font.preview}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label>Border Radius</Label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { name: 'None', value: 'none', class: 'rounded-none' },
+                    { name: 'Small', value: 'small', class: 'rounded-sm' },
+                    { name: 'Medium', value: 'medium', class: 'rounded-md' },
+                    { name: 'Large', value: 'large', class: 'rounded-lg' },
+                    { name: 'Extra Large', value: 'xl', class: 'rounded-xl' },
+                    { name: 'Full', value: 'full', class: 'rounded-full' },
+                  ].map((radius) => (
+                    <button
+                      key={radius.value}
+                      onClick={() => setTheme({ ...theme, borderRadius: radius.value })}
+                      className={`p-3 text-center border hover:bg-accent ${
+                        theme.borderRadius === radius.value
+                          ? 'border-primary bg-accent'
+                          : 'border-border'
+                      } ${radius.class}`}
+                    >
+                      <div className="text-sm font-medium">{radius.name}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Button onClick={() => console.log('Save theme settings')}>Save Theme Settings</Button>
             </CardContent>
           </Card>
         </TabsContent>
