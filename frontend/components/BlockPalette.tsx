@@ -3,12 +3,13 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { User, Code, Briefcase, BookOpen, Plus } from 'lucide-react';
+import { User, Code, Briefcase, BookOpen, Plus, Github, Download } from 'lucide-react';
 
 type BlockType = 'bio' | 'skills' | 'projects' | 'blog';
 
 interface BlockPaletteProps {
   onAddBlock: (type: BlockType) => void;
+  onImportFromGitHub?: () => void;
 }
 
 const blockTypes = [
@@ -42,7 +43,7 @@ const blockTypes = [
   },
 ];
 
-export function BlockPalette({ onAddBlock }: BlockPaletteProps) {
+export function BlockPalette({ onAddBlock, onImportFromGitHub }: BlockPaletteProps) {
   return (
     <div className="space-y-4">
       <div>
@@ -83,6 +84,23 @@ export function BlockPalette({ onAddBlock }: BlockPaletteProps) {
           );
         })}
       </div>
+
+      {/* GitHub Import Section */}
+      {onImportFromGitHub && (
+        <div className="pt-4 border-t">
+          <Button
+            onClick={onImportFromGitHub}
+            className="w-full mb-4"
+            variant="outline"
+          >
+            <Github className="w-4 h-4 mr-2" />
+            Import from GitHub
+          </Button>
+          <p className="text-xs text-muted-foreground mb-4">
+            Import your repositories as project blocks
+          </p>
+        </div>
+      )}
 
       <div className="pt-4 border-t">
         <div className="space-y-2">

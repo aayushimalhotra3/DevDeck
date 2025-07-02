@@ -6,6 +6,7 @@ import { LivePreview } from '@/components/LivePreview';
 import { BlockPalette } from '@/components/BlockPalette';
 import { PropertyPanel } from '@/components/PropertyPanel';
 import { EditorToolbar } from '@/components/EditorToolbar';
+import { GitHubImport } from '@/components/GitHubImport';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -32,6 +33,7 @@ export default function EditPortfolio() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [showGitHubImport, setShowGitHubImport] = useState(false);
   const autosaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
 
@@ -222,6 +224,43 @@ export default function EditPortfolio() {
     setSelectedBlockId(blockId);
   };
 
+  const handleGitHubImport = async (repos: any[]) => {
+    try {
+      // Convert GitHub repos to project blocks
+      const projectBlocks: PortfolioBlock[] = repos.map((repo, index) => ({
+        id: `github-project-${repo.id}`,
+        type: 'projects' as const,
+        content: {
+          title: repo.name,
+          description: repo.description || 'No description available',
+          technologies: repo.language ? [repo.language, ...repo.topics.slice(0, 4)] : repo.topics.slice(0, 5),
+          githubUrl: repo.html_url,
+          demoUrl: repo.homepage || undefined,
+          stars: repo.stargazers_count,
+          forks: repo.forks_count,
+          lastUpdated: repo.updated_at,
+          featured: repo.stargazers_count > 10, // Auto-feature popular repos
+        },
+        position: { x: 0, y: (blocks.length + index) * 120 },
+      }));
+
+      const updatedBlocks = [...blocks, ...projectBlocks];
+      handleBlockUpdate(updatedBlocks);
+      
+      toast({
+        title: "Success!",
+        description: `Imported ${repos.length} repositories as project blocks.`,
+      });
+    } catch (error) {
+      console.error('Failed to import repositories:', error);
+      toast({
+        title: "Error",
+        description: "Failed to import repositories. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const getPreviewWidth = () => {
     switch (previewMode) {
       case 'mobile':
@@ -251,16 +290,19 @@ export default function EditPortfolio() {
       <div className="flex-1 flex overflow-hidden">
         {/* Block Palette Sidebar */}
         <div className="w-64 border-r bg-muted/30 p-4 overflow-y-auto">
-          <BlockPalette onAddBlock={(type: 'bio' | 'skills' | 'projects' | 'blog') => {
-            const newBlock: PortfolioBlock = {
-              id: `block-${Date.now()}`,
-              type,
-              content: {},
-              position: { x: 0, y: blocks.length * 100 },
-            };
-            const updatedBlocks = [...blocks, newBlock];
-            handleBlockUpdate(updatedBlocks);
-          }} />
+          <BlockPalette 
+            onAddBlock={(type: 'bio' | 'skills' | 'projects' | 'blog') => {
+              const newBlock: PortfolioBlock = {
+                id: `block-${Date.now()}`,
+                type,
+                content: {},
+                position: { x: 0, y: blocks.length * 100 },
+              };
+              const updatedBlocks = [...blocks, newBlock];
+              handleBlockUpdate(updatedBlocks);
+            }}
+            onImportFromGitHub={() => setShowGitHubImport(true)}
+          />
         </div>
 
         {/* Main Editor Area */}
@@ -340,6 +382,14 @@ export default function EditPortfolio() {
           </Tabs>
         </div>
       </div>
+
+      {/* GitHub Import Modal */}
+      {showGitHubImport && (
+        <GitHubImport
+          onImport={handleGitHubImport}
+          onClose={() => setShowGitHubImport(false)}
+        />
+      )}
 
       {/* Status Bar */}
       <div className="border-t px-6 py-2 bg-muted/30 flex items-center justify-between text-sm text-muted-foreground">
