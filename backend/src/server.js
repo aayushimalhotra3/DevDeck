@@ -14,7 +14,7 @@ const portfolioRoutes = require('./routes/portfolio')
 const githubRoutes = require('./routes/github')
 
 // Import middleware
-const errorHandler = require('./middleware/errorHandler')
+const { globalErrorHandler } = require('./middleware/errorHandler')
 const { connectDB } = require('./config/database')
 const { initializeWebSocket } = require('./ws')
 
@@ -23,8 +23,9 @@ const server = createServer(app)
 
 const PORT = process.env.PORT || 5000
 
-// Connect to database
-connectDB()
+// Connect to database (commented out for testing without MongoDB)
+// connectDB()
+console.log('⚠️  MongoDB connection disabled for testing')
 
 // Security middleware
 app.use(helmet())
@@ -83,7 +84,7 @@ app.use('*', (req, res) => {
 })
 
 // Error handling middleware (should be last)
-app.use(errorHandler)
+app.use(globalErrorHandler)
 
 // Start server
 server.listen(PORT, () => {

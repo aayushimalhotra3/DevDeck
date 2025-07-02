@@ -10,27 +10,34 @@
     "lint": "eslint src/"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "axios": "^1.6.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "mongoose": "^8.0.0",
-    "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3",
-    "axios": "^1.6.0",
-    "socket.io": "^4.7.2",
-    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.2.1",
     "helmet": "^7.1.0",
+    "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.0",
     "morgan": "^1.10.0",
-    "joi": "^17.11.0"
+    "socket.io": "^4.7.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1",
+    "eslint": "^8.54.0",
     "jest": "^29.7.0",
-    "supertest": "^6.3.3",
-    "eslint": "^8.54.0"
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
   },
-  "keywords": ["portfolio", "api", "github", "oauth", "websocket"],
+  "keywords": [
+    "portfolio",
+    "api",
+    "github",
+    "oauth",
+    "websocket"
+  ],
   "author": "DevDeck Team",
   "license": "MIT"
 }

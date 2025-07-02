@@ -7,6 +7,19 @@ const { asyncHandler } = require('../middleware/errorHandler')
 
 const router = express.Router()
 
+// @desc    Initiate GitHub OAuth
+// @route   POST /auth/github
+// @access  Public
+router.post('/github', (req, res) => {
+  const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=user:email,read:user,repo&redirect_uri=${process.env.GITHUB_CALLBACK_URL}`
+  
+  res.status(200).json({
+    success: true,
+    authUrl: githubAuthUrl,
+    message: 'Redirect to GitHub for authentication'
+  })
+})
+
 // @desc    GitHub OAuth callback
 // @route   POST /auth/github/callback
 // @access  Public
@@ -178,7 +191,7 @@ router.post('/logout', (req, res) => {
 })
 
 // @desc    Get current user
-// @route   GET /auth/me
+// @route   GET /auth/user
 // @access  Private
 router.get('/me', asyncHandler(async (req, res) => {
   const token = req.cookies.token

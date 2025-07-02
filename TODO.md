@@ -34,19 +34,19 @@
 ## 🧪 Week 1: Authentication & Dashboard
 
 ### Aayushi Tasks:
-- [ ] Build backend route for GitHub OAuth callback
-- [ ] Implement Passport.js GitHub strategy
-- [ ] Store GitHub token securely in database
-- [ ] Create login session management
-- [ ] Add user model with required fields:
-  - [ ] `username`, `email`, `avatar_url`
-  - [ ] `github_token`, `github_id`
-  - [ ] `created_at`, `updated_at`
-- [ ] Test session verification middleware
-- [ ] Create basic API routes:
-  - [ ] `POST /auth/github`
-  - [ ] `GET /auth/user`
-  - [ ] `POST /auth/logout`
+- [x] Build backend route for GitHub OAuth callback
+- [x] Implement Passport.js GitHub strategy (using direct OAuth implementation)
+- [x] Store GitHub token securely in database
+- [x] Create login session management
+- [x] Add user model with required fields:
+  - [x] `username`, `email`, `avatar_url`
+  - [x] `github_token`, `github_id`
+  - [x] `created_at`, `updated_at`
+- [x] Test session verification middleware
+- [x] Create basic API routes:
+  - [x] `POST /auth/github`
+  - [x] `GET /auth/user`
+  - [x] `POST /auth/logout`
 
 ### Kathan Tasks:
 - [ ] Implement GitHub OAuth using NextAuth.js
