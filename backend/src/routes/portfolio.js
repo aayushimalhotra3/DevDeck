@@ -45,7 +45,7 @@ router.get('/', auth, asyncHandler(async (req, res) => {
     success: true,
     portfolio: portfolio
   })
-}))
+ }))
 
 // @desc    Update portfolio
 // @route   PUT /api/portfolio
@@ -117,90 +117,237 @@ router.put('/', auth, validatePortfolioUpdate, asyncHandler(async (req, res) => 
 }))
 
 // @desc    Get public portfolio by username
-// @route   GET /api/portfolio/:username
+// @route   GET /api/portfolio/public/:username
 // @access  Public
-router.get('/:username', asyncHandler(async (req, res) => {
+router.get('/public/:username', asyncHandler(async (req, res) => {
   const { username } = req.params
+  const { track_view = 'true' } = req.query
   
-  const user = await User.findByUsername(username)
-  
-  if (!user) {
-    return res.status(404).json({
+  try {
+    const portfolio = await Portfolio.findPublishedByUsername(username)
+    
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        message: 'Portfolio not found or not published'
+      })
+    }
+    
+    // Check if portfolio is password protected
+    if (portfolio.publishing.passwordProtected) {
+      const { password } = req.query
+      if (!password || password !== portfolio.publishing.password) {
+        return res.status(401).json({
+          success: false,
+          message: 'Password required to view this portfolio',
+          passwordProtected: true
+        })
+      }
+    }
+    
+    // Track view if enabled
+    if (track_view === 'true') {
+      const clientIP = req.ip || req.connection.remoteAddress
+      const userAgent = req.get('User-Agent')
+      
+      // Simple unique view tracking (could be enhanced with more sophisticated logic)
+      const isUnique = !req.session || !req.session.viewedPortfolios || 
+                      !req.session.viewedPortfolios.includes(portfolio._id.toString())
+      
+      await portfolio.incrementViews(isUnique)
+      
+      // Track in session
+      if (req.session) {
+        if (!req.session.viewedPortfolios) {
+          req.session.viewedPortfolios = []
+        }
+        if (isUnique) {
+          req.session.viewedPortfolios.push(portfolio._id.toString())
+        }
+      }
+    }
+    
+    // Generate SEO metadata
+    const seoData = {
+      title: portfolio.seo.title || `${portfolio.userId.name || portfolio.userId.username}'s Portfolio`,
+      description: portfolio.seo.description || `Check out ${portfolio.userId.name || portfolio.userId.username}'s portfolio on DevDeck`,
+      keywords: portfolio.seo.keywords || [],
+      ogImage: portfolio.seo.ogImage || portfolio.userId.avatar_url,
+      url: `${process.env.FRONTEND_URL}/portfolio/${username}`,
+      author: portfolio.userId.name || portfolio.userId.username,
+      publishedAt: portfolio.publishing.publishedAt,
+      modifiedAt: portfolio.updatedAt
+    }
+    
+    res.status(200).json({
+      success: true,
+      portfolio: {
+        ...portfolio.toJSON(),
+        publishing: {
+          publishedAt: portfolio.publishing.publishedAt,
+          customDomain: portfolio.publishing.customDomain,
+          isIndexable: portfolio.publishing.isIndexable
+          // Exclude password and passwordProtected for security
+        }
+      },
+      user: {
+        username: portfolio.userId.username,
+        name: portfolio.userId.name,
+        avatar_url: portfolio.userId.avatar_url,
+        bio: portfolio.userId.bio,
+        location: portfolio.userId.location,
+        website: portfolio.userId.website,
+        social: {
+          twitter: portfolio.userId.twitter,
+          linkedin: portfolio.userId.linkedin,
+          github: portfolio.userId.github
+        }
+      },
+      seo: seoData
+    })
+  } catch (error) {
+    console.error('Error fetching public portfolio:', error)
+    res.status(500).json({
       success: false,
-      message: 'User not found'
+      message: 'Failed to fetch portfolio'
     })
   }
-  
-  // Check if portfolio is public
-  if (!user.privacy_settings.portfolio_public) {
-    return res.status(403).json({
-      success: false,
-      message: 'This portfolio is private'
-    })
-  }
-  
-  const portfolio = await Portfolio.findByUserId(user._id)
-  
-  if (!portfolio || portfolio.status !== 'published') {
-    return res.status(404).json({
-      success: false,
-      message: 'Portfolio not found or not published'
-    })
-  }
-  
-  // Increment view count
-  await portfolio.incrementViews()
-  
-  res.status(200).json({
-    success: true,
-    portfolio: portfolio,
-    user: user.toPublicJSON()
-  })
 }))
 
 // @desc    Publish portfolio
 // @route   POST /api/portfolio/publish
 // @access  Private
 router.post('/publish', auth, asyncHandler(async (req, res) => {
-  const portfolio = await Portfolio.findByUserId(req.user.userId)
+  const { 
+    customDomain, 
+    isIndexable = true, 
+    passwordProtected = false, 
+    password 
+  } = req.body
   
-  if (!portfolio) {
-    return res.status(404).json({
+  try {
+    const portfolio = await Portfolio.findByUserId(req.user.userId)
+    
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        message: 'Portfolio not found'
+      })
+    }
+    
+    // Validate password if password protection is enabled
+    if (passwordProtected && (!password || password.length < 6)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters long when password protection is enabled'
+      })
+    }
+    
+    // Update publishing settings
+    portfolio.publishing.customDomain = customDomain || null
+    portfolio.publishing.isIndexable = isIndexable
+    portfolio.publishing.passwordProtected = passwordProtected
+    portfolio.publishing.password = passwordProtected ? password : null
+    
+    await portfolio.publish()
+    
+    // Generate portfolio URL
+    const portfolioUrl = customDomain 
+      ? `https://${customDomain}` 
+      : `${process.env.FRONTEND_URL}/portfolio/${req.user.username}`
+    
+    // Emit real-time update
+    if (req.io) {
+      req.io.to(`user_${req.user.userId}`).emit('portfolio_published', {
+        portfolioId: portfolio._id,
+        publishedAt: portfolio.publishing.publishedAt,
+        url: portfolioUrl
+      })
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: 'Portfolio published successfully',
+      portfolio: {
+        ...portfolio.toJSON(),
+        publishing: {
+          publishedAt: portfolio.publishing.publishedAt,
+          customDomain: portfolio.publishing.customDomain,
+          isIndexable: portfolio.publishing.isIndexable,
+          passwordProtected: portfolio.publishing.passwordProtected
+          // Exclude password for security
+        }
+      },
+      url: portfolioUrl
+    })
+  } catch (error) {
+    console.error('Error publishing portfolio:', error)
+    res.status(500).json({
       success: false,
-      message: 'Portfolio not found'
+      message: 'Failed to publish portfolio'
     })
   }
-  
-  await portfolio.publish()
-  
-  res.status(200).json({
-    success: true,
-    message: 'Portfolio published successfully',
-    portfolio: portfolio
-  })
 }))
 
 // @desc    Unpublish portfolio
 // @route   POST /api/portfolio/unpublish
 // @access  Private
 router.post('/unpublish', auth, asyncHandler(async (req, res) => {
-  const portfolio = await Portfolio.findByUserId(req.user.userId)
-  
-  if (!portfolio) {
-    return res.status(404).json({
+  try {
+    const portfolio = await Portfolio.findByUserId(req.user.userId)
+    
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        message: 'Portfolio not found'
+      })
+    }
+    
+    if (portfolio.status !== 'published') {
+      return res.status(400).json({
+        success: false,
+        message: 'Portfolio is not currently published'
+      })
+    }
+    
+    // Update status and clear publishing data
+    portfolio.status = 'draft'
+    portfolio.publishing.publishedAt = null
+    portfolio.publishing.customDomain = null
+    portfolio.publishing.passwordProtected = false
+    portfolio.publishing.password = null
+    portfolio.publishing.isIndexable = true
+    
+    await portfolio.save()
+    
+    // Emit real-time update
+    if (req.io) {
+      req.io.to(`user_${req.user.userId}`).emit('portfolio_unpublished', {
+        portfolioId: portfolio._id,
+        unpublishedAt: new Date()
+      })
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: 'Portfolio unpublished successfully',
+      portfolio: {
+        ...portfolio.toJSON(),
+        publishing: {
+          publishedAt: null,
+          customDomain: null,
+          isIndexable: true,
+          passwordProtected: false
+        }
+      }
+    })
+  } catch (error) {
+    console.error('Error unpublishing portfolio:', error)
+    res.status(500).json({
       success: false,
-      message: 'Portfolio not found'
+      message: 'Failed to unpublish portfolio'
     })
   }
-  
-  portfolio.status = 'draft'
-  await portfolio.save()
-  
-  res.status(200).json({
-    success: true,
-    message: 'Portfolio unpublished successfully',
-    portfolio: portfolio
-  })
 }))
 
 // @desc    Add block to portfolio
@@ -542,32 +689,187 @@ router.put('/:id', auth, validatePortfolioId, validatePortfolioUpdate, asyncHand
   })
 }))
 
+// @desc    Get all published portfolios for discovery
+// @route   GET /api/portfolio/discover
+// @access  Public
+router.get('/discover', asyncHandler(async (req, res) => {
+  const { page = 1, limit = 12, sort = 'recent', search } = req.query
+  
+  try {
+    const options = {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      sort: {},
+      populate: {
+        path: 'userId',
+        select: 'username name avatar_url bio location'
+      }
+    }
+    
+    // Set sort options
+    switch (sort) {
+      case 'popular':
+        options.sort = { 'stats.views': -1, 'publishing.publishedAt': -1 }
+        break
+      case 'recent':
+        options.sort = { 'publishing.publishedAt': -1 }
+        break
+      case 'trending':
+        options.sort = { 'stats.uniqueViews': -1, 'publishing.publishedAt': -1 }
+        break
+      default:
+        options.sort = { 'publishing.publishedAt': -1 }
+    }
+    
+    // Build query
+    let query = {
+      status: 'published',
+      'publishing.isIndexable': true,
+      'publishing.passwordProtected': false
+    }
+    
+    // Add search functionality
+    if (search) {
+      query.$or = [
+        { 'seo.title': { $regex: search, $options: 'i' } },
+        { 'seo.description': { $regex: search, $options: 'i' } },
+        { 'seo.keywords': { $in: [new RegExp(search, 'i')] } }
+      ]
+    }
+    
+    const portfolios = await Portfolio.paginate(query, options)
+    
+    // Transform response to include only necessary data
+    const transformedPortfolios = portfolios.docs.map(portfolio => ({
+      _id: portfolio._id,
+      user: {
+        username: portfolio.userId.username,
+        name: portfolio.userId.name,
+        avatar_url: portfolio.userId.avatar_url,
+        bio: portfolio.userId.bio,
+        location: portfolio.userId.location
+      },
+      seo: {
+        title: portfolio.seo.title,
+        description: portfolio.seo.description,
+        ogImage: portfolio.seo.ogImage
+      },
+      stats: {
+        views: portfolio.stats.views,
+        uniqueViews: portfolio.stats.uniqueViews
+      },
+      publishedAt: portfolio.publishing.publishedAt,
+      lastModified: portfolio.updatedAt,
+      previewBlocks: portfolio.blocks.slice(0, 3).map(block => ({
+        type: block.type,
+        content: block.type === 'text' ? 
+          (block.content.text ? block.content.text.substring(0, 150) + '...' : '') :
+          block.content
+      }))
+    }))
+    
+    res.status(200).json({
+      success: true,
+      portfolios: transformedPortfolios,
+      pagination: {
+        currentPage: portfolios.page,
+        totalPages: portfolios.totalPages,
+        totalDocs: portfolios.totalDocs,
+        hasNextPage: portfolios.hasNextPage,
+        hasPrevPage: portfolios.hasPrevPage
+      },
+      filters: {
+        sort,
+        search: search || null
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching portfolios for discovery:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch portfolios'
+    })
+  }
+}))
+
 // @desc    Get portfolio analytics
 // @route   GET /api/portfolio/analytics
 // @access  Private
 router.get('/analytics', auth, asyncHandler(async (req, res) => {
-  const portfolio = await Portfolio.findByUserId(req.user.userId)
+  const { timeframe = '30d' } = req.query
   
-  if (!portfolio) {
-    return res.status(404).json({
+  try {
+    const portfolio = await Portfolio.findByUserId(req.user.userId)
+    
+    if (!portfolio) {
+      return res.status(404).json({
+        success: false,
+        message: 'Portfolio not found'
+      })
+    }
+    
+    // Calculate timeframe dates
+    const now = new Date()
+    let startDate
+    
+    switch (timeframe) {
+      case '7d':
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        break
+      case '30d':
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+        break
+      case '90d':
+        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+        break
+      case '1y':
+        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
+        break
+      default:
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    }
+    
+    const analytics = {
+      overview: {
+        totalViews: portfolio.stats.views,
+        uniqueViews: portfolio.stats.uniqueViews,
+        shares: portfolio.stats.shares,
+        lastViewed: portfolio.stats.lastViewed,
+        status: portfolio.status,
+        publishedAt: portfolio.publishing.publishedAt,
+        isPublic: portfolio.status === 'published'
+      },
+      engagement: {
+        viewsToday: 0, // Would need daily tracking implementation
+        avgViewsPerDay: portfolio.stats.views / Math.max(1, Math.floor((now - (portfolio.publishing.publishedAt || portfolio.createdAt)) / (24 * 60 * 60 * 1000))),
+        bounceRate: 0, // Would need session tracking
+        avgTimeOnPage: 0 // Would need session tracking
+      },
+      traffic: {
+        directViews: portfolio.stats.views, // Simplified - would need referrer tracking
+        socialViews: 0,
+        searchViews: 0,
+        referralViews: 0
+      },
+      performance: {
+        loadTime: 0, // Would need performance tracking
+        mobileViews: 0, // Would need device tracking
+        desktopViews: 0
+      }
+    }
+    
+    res.status(200).json({
+      success: true,
+      analytics,
+      timeframe
+    })
+  } catch (error) {
+    console.error('Error fetching analytics:', error)
+    res.status(500).json({
       success: false,
-      message: 'Portfolio not found'
+      message: 'Failed to fetch analytics'
     })
   }
-  
-  const analytics = {
-    views: portfolio.stats.views,
-    uniqueViews: portfolio.stats.uniqueViews,
-    lastViewed: portfolio.stats.lastViewed,
-    shares: portfolio.stats.shares,
-    status: portfolio.status,
-    publishedAt: portfolio.publishing.publishedAt
-  }
-  
-  res.status(200).json({
-    success: true,
-    analytics: analytics
-  })
 }))
 
 module.exports = router

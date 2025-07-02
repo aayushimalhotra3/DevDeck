@@ -20,14 +20,14 @@
 - [x] Set up database connection and basic middleware
 
 ### Kathan Tasks:
-- [ ] Set up GitHub repo `devdeck` with proper structure
-- [ ] Create `frontend/` with Next.js App Router + Tailwind + Shadcn
-- [ ] Build base page structure:
-  - [ ] `/dashboard` - User dashboard
-  - [ ] `/edit` - Portfolio editor
-  - [ ] `/preview/[username]` - Public portfolio view
+- [x] Set up GitHub repo `devdeck` with proper structure
+- [x] Create `frontend/` with Next.js App Router + Tailwind + Shadcn
+- [x] Build base page structure:
+  - [x] `/dashboard` - User dashboard
+  - [x] `/edit` - Portfolio editor
+  - [x] `/preview/[username]` - Public portfolio view
 - [ ] Set up GitHub project board (kanban style)
-- [ ] Configure ESLint, Prettier, and TypeScript
+- [x] Configure ESLint, Prettier, and TypeScript
 
 ---
 
@@ -49,13 +49,13 @@
   - [x] `POST /auth/logout`
 
 ### Kathan Tasks:
-- [ ] Implement GitHub OAuth using NextAuth.js
-- [ ] Create login page with GitHub OAuth button
-- [ ] Set up session management on frontend
-- [ ] Build `/dashboard` page:
-  - [ ] Display user avatar and GitHub info
-  - [ ] Show portfolio creation/edit options
-  - [ ] Add navigation menu
+- [x] Implement GitHub OAuth using NextAuth.js
+- [x] Create login page with GitHub OAuth button
+- [x] Set up session management on frontend
+- [x] Build `/dashboard` page:
+  - [x] Display user avatar and GitHub info
+  - [x] Show portfolio creation/edit options
+  - [x] Add navigation menu
 - [ ] Deploy frontend to Vercel
 - [ ] Deploy backend to Render/Railway/GCP
 - [ ] Test end-to-end authentication flow
@@ -80,17 +80,17 @@
 - [x] Add data validation and error handling
 
 ### Kathan Tasks:
-- [ ] Build `/edit` page with drag-and-drop functionality:
-  - [ ] Use `react-dnd` or `framer-motion` for DnD
-  - [ ] Create draggable block components
-  - [ ] Implement drop zones and reordering
-- [ ] Create live preview pane:
-  - [ ] Real-time updates via WebSocket
-  - [ ] Responsive preview modes (desktop/tablet/mobile)
-- [ ] Style editor interface with Tailwind + Shadcn:
-  - [ ] Block palette/sidebar
-  - [ ] Property panels for block customization
-  - [ ] Toolbar with save/undo/redo actions
+- [x] Build `/edit` page with drag-and-drop functionality:
+  - [x] Use `react-dnd` or `framer-motion` for DnD
+  - [x] Create draggable block components
+  - [x] Implement drop zones and reordering
+- [x] Create live preview pane:
+  - [x] Real-time updates via WebSocket
+  - [x] Responsive preview modes (desktop/tablet/mobile)
+- [x] Style editor interface with Tailwind + Shadcn:
+  - [x] Block palette/sidebar
+  - [x] Property panels for block customization
+  - [x] Toolbar with save/undo/redo actions
 - [ ] Implement autosave with visual feedback
 - [ ] Add keyboard shortcuts for common actions
 
@@ -119,15 +119,15 @@
   - [ ] Repository selection interface
   - [ ] Preview of imported data
   - [ ] Bulk import functionality
-- [ ] Create project card components:
-  - [ ] Repository information display
-  - [ ] Stars, forks, and language badges
-  - [ ] Last updated indicators
-  - [ ] Custom project descriptions
-- [ ] Style project cards with:
-  - [ ] Technology badges
-  - [ ] GitHub icons and branding
-  - [ ] Hover effects and animations
+- [x] Create project card components:
+  - [x] Repository information display
+  - [x] Stars, forks, and language badges
+  - [x] Last updated indicators
+  - [x] Custom project descriptions
+- [x] Style project cards with:
+  - [x] Technology badges
+  - [x] GitHub icons and branding
+  - [x] Hover effects and animations
 - [ ] Add project filtering and sorting options
 
 ---
@@ -135,27 +135,28 @@
 ## 💾 Week 4: Save, Deploy, Public Portfolio
 
 ### Aayushi Tasks:
-- [ ] Create portfolio publishing system:
-  - [ ] `POST /api/portfolio/publish` - Publish portfolio
-  - [ ] `POST /api/portfolio/unpublish` - Unpublish portfolio
-  - [ ] `GET /api/portfolio/public/:username` - Get public portfolio
-- [ ] Add database schema updates:
-  - [ ] `isPublic: boolean` field
-  - [ ] `publishedAt: Date` field
-  - [ ] `customDomain: string` field (optional)
-- [ ] Implement portfolio URL generation
-- [ ] Add SEO metadata generation
-- [ ] Create portfolio analytics tracking
+- [x] Create portfolio publishing system:
+  - [x] `POST /api/portfolio/publish` - Publish portfolio
+  - [x] `POST /api/portfolio/unpublish` - Unpublish portfolio
+  - [x] `GET /api/portfolio/public/:username` - Get public portfolio
+- [x] Add database schema updates:
+  - [x] `isPublic: boolean` field (implemented as status field)
+  - [x] `publishedAt: Date` field
+  - [x] `customDomain: string` field (optional)
+- [x] Implement portfolio URL generation
+- [x] Add SEO metadata generation
+- [x] Create portfolio analytics tracking
+- [x] **BONUS**: Added `GET /api/portfolio/discover` - Public portfolio discovery with search and filtering
 
 ### Kathan Tasks:
-- [ ] Add publish/unpublish toggle in settings:
-  - [ ] Settings page creation
-  - [ ] Privacy controls
-  - [ ] Portfolio URL display
-- [ ] Create public portfolio layout (`/preview/[username]`):
-  - [ ] Responsive design for all devices
-  - [ ] SEO optimization with meta tags
-  - [ ] Social media sharing cards
+- [x] Add publish/unpublish toggle in settings:
+  - [x] Settings page creation
+  - [x] Privacy controls
+  - [x] Portfolio URL display
+- [x] Create public portfolio layout (`/preview/[username]`):
+  - [x] Responsive design for all devices
+  - [x] SEO optimization with meta tags
+  - [x] Social media sharing cards
 - [ ] Implement theme system:
   - [ ] Light/dark mode toggle
   - [ ] Custom color schemes
