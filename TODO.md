@@ -9,15 +9,15 @@
 ## 🔧 Phase 0: Setup & Planning (Day 1–2)
 
 ### Aayushi Tasks:
-- [ ] Set up `backend/` folder with Express.js
-- [ ] Initialize MongoDB database and write initial schema
-  - [ ] `User` model (username, avatar, github_token, etc.)
-  - [ ] `Portfolio` model (blocks, theme, isPublic)
-  - [ ] `Block` model (type, content, position)
-  - [ ] `Theme` model (colors, fonts, layout)
-- [ ] Create base WebSocket server file (`ws.js`)
-- [ ] Add comprehensive `.env.example` for backend secrets
-- [ ] Set up database connection and basic middleware
+- [x] Set up `backend/` folder with Express.js
+- [x] Initialize MongoDB database and write initial schema
+  - [x] `User` model (username, avatar, github_token, etc.)
+  - [x] `Portfolio` model (blocks, theme, isPublic)
+  - [x] `Block` model (type, content, position)
+  - [x] `Theme` model (colors, fonts, layout)
+- [x] Create base WebSocket server file (`ws.js`)
+- [x] Add comprehensive `.env.example` for backend secrets
+- [x] Set up database connection and basic middleware
 
 ### Kathan Tasks:
 - [ ] Set up GitHub repo `devdeck` with proper structure
