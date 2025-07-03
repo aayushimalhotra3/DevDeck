@@ -44,7 +44,7 @@ export class ApiErrorClass extends Error {
 const ERROR_MESSAGES: Record<number, string> = {
   400: 'Invalid request. Please check your input and try again.',
   401: 'You need to sign in to access this feature.',
-  403: 'You don\'t have permission to perform this action.',
+  403: "You don't have permission to perform this action.",
   404: 'The requested resource was not found.',
   409: 'This action conflicts with existing data.',
   422: 'The provided data is invalid.',
@@ -57,36 +57,41 @@ const ERROR_MESSAGES: Record<number, string> = {
 
 // Specific error codes for better handling
 const SPECIFIC_ERROR_MESSAGES: Record<string, string> = {
-  'INVALID_CREDENTIALS': 'Invalid email or password.',
-  'USER_NOT_FOUND': 'User account not found.',
-  'EMAIL_ALREADY_EXISTS': 'An account with this email already exists.',
-  'USERNAME_TAKEN': 'This username is already taken.',
-  'PORTFOLIO_NOT_FOUND': 'Portfolio not found.',
-  'GITHUB_API_ERROR': 'Unable to connect to GitHub. Please try again.',
-  'RATE_LIMIT_EXCEEDED': 'Too many requests. Please wait before trying again.',
-  'VALIDATION_ERROR': 'Please check your input and try again.',
-  'NETWORK_ERROR': 'Network connection error. Please check your internet connection.',
-  'TIMEOUT_ERROR': 'Request timed out. Please try again.',
+  INVALID_CREDENTIALS: 'Invalid email or password.',
+  USER_NOT_FOUND: 'User account not found.',
+  EMAIL_ALREADY_EXISTS: 'An account with this email already exists.',
+  USERNAME_TAKEN: 'This username is already taken.',
+  PORTFOLIO_NOT_FOUND: 'Portfolio not found.',
+  GITHUB_API_ERROR: 'Unable to connect to GitHub. Please try again.',
+  RATE_LIMIT_EXCEEDED: 'Too many requests. Please wait before trying again.',
+  VALIDATION_ERROR: 'Please check your input and try again.',
+  NETWORK_ERROR:
+    'Network connection error. Please check your internet connection.',
+  TIMEOUT_ERROR: 'Request timed out. Please try again.',
 };
 
 // Parse error response from API
 export const parseApiError = async (response: Response): Promise<ApiError> => {
   let errorData: ErrorResponse;
-  
+
   try {
     errorData = await response.json();
   } catch {
     // If response is not JSON, create a generic error
     return {
-      message: ERROR_MESSAGES[response.status] || 'An unexpected error occurred.',
+      message:
+        ERROR_MESSAGES[response.status] || 'An unexpected error occurred.',
       status: response.status,
       timestamp: new Date().toISOString(),
     };
   }
 
   // Extract error message
-  let message = errorData.message || ERROR_MESSAGES[response.status] || 'An unexpected error occurred.';
-  
+  let message =
+    errorData.message ||
+    ERROR_MESSAGES[response.status] ||
+    'An unexpected error occurred.';
+
   // Use specific error message if available
   if (errorData.code && SPECIFIC_ERROR_MESSAGES[errorData.code]) {
     message = SPECIFIC_ERROR_MESSAGES[errorData.code];
@@ -94,7 +99,9 @@ export const parseApiError = async (response: Response): Promise<ApiError> => {
 
   // Handle validation errors
   if (errorData.errors && errorData.errors.length > 0) {
-    const validationMessages = errorData.errors.map(err => `${err.field}: ${err.message}`);
+    const validationMessages = errorData.errors.map(
+      err => `${err.field}: ${err.message}`
+    );
     message = validationMessages.join(', ');
   }
 
@@ -126,7 +133,12 @@ export const apiRequest = async <T = any>(
 
     if (!response.ok) {
       const apiError = await parseApiError(response);
-      throw new ApiErrorClass(apiError.message, apiError.status, apiError.code, apiError.details);
+      throw new ApiErrorClass(
+        apiError.message,
+        apiError.status,
+        apiError.code,
+        apiError.details
+      );
     }
 
     // Handle empty responses
@@ -174,7 +186,10 @@ export const apiRequest = async <T = any>(
 export const useApiErrorHandler = () => {
   const { toast } = useToast();
 
-  const handleApiError = (error: ApiError | ApiErrorClass | Error, context?: string) => {
+  const handleApiError = (
+    error: ApiError | ApiErrorClass | Error,
+    context?: string
+  ) => {
     let title = 'Error';
     let description = 'An unexpected error occurred.';
     let variant: 'default' | 'destructive' = 'destructive';
@@ -182,7 +197,7 @@ export const useApiErrorHandler = () => {
     if (error instanceof ApiErrorClass) {
       title = getErrorTitle(error.status);
       description = error.message;
-      
+
       // Different styling for different error types
       if (error.status === 401) {
         variant = 'default';
@@ -208,7 +223,8 @@ export const useApiErrorHandler = () => {
       title,
       description,
       variant,
-      duration: error instanceof ApiErrorClass && error.status === 401 ? 5000 : 4000,
+      duration:
+        error instanceof ApiErrorClass && error.status === 401 ? 5000 : 4000,
     });
 
     // Log error for debugging
@@ -246,9 +262,13 @@ export const retryApiRequest = async <T>(
       return await requestFn();
     } catch (error) {
       lastError = error as Error;
-      
+
       // Don't retry client errors (4xx)
-      if (error instanceof ApiErrorClass && error.status >= 400 && error.status < 500) {
+      if (
+        error instanceof ApiErrorClass &&
+        error.status >= 400 &&
+        error.status < 500
+      ) {
         throw error;
       }
 
@@ -258,7 +278,9 @@ export const retryApiRequest = async <T>(
       }
 
       // Wait before retrying with exponential backoff
-      await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, attempt - 1)));
+      await new Promise(resolve =>
+        setTimeout(resolve, delay * Math.pow(2, attempt - 1))
+      );
     }
   }
 
@@ -269,27 +291,30 @@ export const retryApiRequest = async <T>(
 export const isRetryableError = (error: ApiError | ApiErrorClass): boolean => {
   const retryableStatuses = [408, 429, 500, 502, 503, 504];
   const retryableCodes = ['NETWORK_ERROR', 'TIMEOUT_ERROR'];
-  
-  return (
-    retryableStatuses.includes(error.status) ||
-    (error.code && retryableCodes.includes(error.code))
-  );
+
+  const hasRetryableStatus = retryableStatuses.includes(error.status);
+  const hasRetryableCode =
+    error.code &&
+    typeof error.code === 'string' &&
+    retryableCodes.includes(error.code);
+
+  return hasRetryableStatus || Boolean(hasRetryableCode);
 };
 
 // Global error handler for unhandled promise rejections
 if (typeof window !== 'undefined') {
-  window.addEventListener('unhandledrejection', (event) => {
+  window.addEventListener('unhandledrejection', event => {
     console.error('Unhandled promise rejection:', event.reason);
-    
+
     // Prevent the default browser error handling
     event.preventDefault();
-    
+
     // You could show a global error notification here
     // or send the error to an error tracking service
   });
 }
 
-export default {
+const apiErrorHandler = {
   parseApiError,
   apiRequest,
   useApiErrorHandler,
@@ -297,3 +322,5 @@ export default {
   isRetryableError,
   ApiErrorClass,
 };
+
+export default apiErrorHandler;

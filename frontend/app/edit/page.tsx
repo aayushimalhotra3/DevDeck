@@ -16,7 +16,14 @@ import { Monitor, Tablet, Smartphone, Save, Undo, Redo } from 'lucide-react';
 
 interface PortfolioBlock {
   id: string;
-  type: 'bio' | 'projects' | 'skills' | 'blog' | 'testimonials' | 'contact' | 'resume';
+  type:
+    | 'bio'
+    | 'projects'
+    | 'skills'
+    | 'blog'
+    | 'testimonials'
+    | 'contact'
+    | 'resume';
   content: any;
   position: { x: number; y: number };
 }
@@ -39,14 +46,17 @@ export default function EditPortfolio() {
   const { toast } = useToast();
 
   // Add to history for undo/redo
-  const addToHistory = useCallback((newBlocks: PortfolioBlock[]) => {
-    setHistory(prev => {
-      const newHistory = prev.slice(0, historyIndex + 1);
-      newHistory.push([...newBlocks]);
-      return newHistory.slice(-50); // Keep last 50 states
-    });
-    setHistoryIndex(prev => Math.min(prev + 1, 49));
-  }, [historyIndex]);
+  const addToHistory = useCallback(
+    (newBlocks: PortfolioBlock[]) => {
+      setHistory(prev => {
+        const newHistory = prev.slice(0, historyIndex + 1);
+        newHistory.push([...newBlocks]);
+        return newHistory.slice(-50); // Keep last 50 states
+      });
+      setHistoryIndex(prev => Math.min(prev + 1, 49));
+    },
+    [historyIndex]
+  );
 
   // Undo functionality
   const undo = useCallback(() => {
@@ -69,37 +79,40 @@ export default function EditPortfolio() {
   }, [history, historyIndex]);
 
   // Autosave functionality
-  const autosave = useCallback(async (blocksToSave: PortfolioBlock[]) => {
-    if (!hasUnsavedChanges) return;
-    
-    setIsAutoSaving(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/portfolio`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-          body: JSON.stringify({ blocks: blocksToSave }),
-        }
-      );
+  const autosave = useCallback(
+    async (blocksToSave: PortfolioBlock[]) => {
+      if (!hasUnsavedChanges) return;
 
-      if (response.ok) {
-        setHasUnsavedChanges(false);
-        toast({
-          title: "Auto-saved",
-          description: "Your changes have been automatically saved.",
-          duration: 2000,
-        });
+      setIsAutoSaving(true);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/portfolio`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ blocks: blocksToSave }),
+          }
+        );
+
+        if (response.ok) {
+          setHasUnsavedChanges(false);
+          toast({
+            title: 'Auto-saved',
+            description: 'Your changes have been automatically saved.',
+            duration: 2000,
+          });
+        }
+      } catch (error) {
+        console.error('Autosave failed:', error);
+      } finally {
+        setIsAutoSaving(false);
       }
-    } catch (error) {
-      console.error('Autosave failed:', error);
-    } finally {
-      setIsAutoSaving(false);
-    }
-  }, [hasUnsavedChanges, toast]);
+    },
+    [hasUnsavedChanges, toast]
+  );
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -136,7 +149,7 @@ export default function EditPortfolio() {
       if (autosaveTimeoutRef.current) {
         clearTimeout(autosaveTimeoutRef.current);
       }
-      
+
       autosaveTimeoutRef.current = setTimeout(() => {
         autosave(blocks);
       }, 3000); // Autosave after 3 seconds of inactivity
@@ -169,9 +182,9 @@ export default function EditPortfolio() {
       } catch (error) {
         console.error('Failed to load portfolio:', error);
         toast({
-          title: "Error",
-          description: "Failed to load your portfolio. Please try again.",
-          variant: "destructive",
+          title: 'Error',
+          description: 'Failed to load your portfolio. Please try again.',
+          variant: 'destructive',
         });
       }
     };
@@ -198,8 +211,8 @@ export default function EditPortfolio() {
         setHasUnsavedChanges(false);
         setLastSaved(new Date());
         toast({
-          title: "Saved!",
-          description: "Your portfolio has been saved successfully.",
+          title: 'Saved!',
+          description: 'Your portfolio has been saved successfully.',
         });
       } else {
         throw new Error('Save failed');
@@ -207,9 +220,9 @@ export default function EditPortfolio() {
     } catch (error) {
       console.error('Failed to save portfolio:', error);
       toast({
-        title: "Error",
-        description: "Failed to save your portfolio. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to save your portfolio. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setSaving(false);
@@ -235,7 +248,9 @@ export default function EditPortfolio() {
         content: {
           title: repo.name,
           description: repo.description || 'No description available',
-          technologies: repo.language ? [repo.language, ...repo.topics.slice(0, 4)] : repo.topics.slice(0, 5),
+          technologies: repo.language
+            ? [repo.language, ...repo.topics.slice(0, 4)]
+            : repo.topics.slice(0, 5),
           githubUrl: repo.html_url,
           demoUrl: repo.homepage || undefined,
           stars: repo.stargazers_count,
@@ -248,17 +263,17 @@ export default function EditPortfolio() {
 
       const updatedBlocks = [...blocks, ...projectBlocks];
       handleBlockUpdate(updatedBlocks);
-      
+
       toast({
-        title: "Success!",
+        title: 'Success!',
         description: `Imported ${repos.length} repositories as project blocks.`,
       });
     } catch (error) {
       console.error('Failed to import repositories:', error);
       toast({
-        title: "Error",
-        description: "Failed to import repositories. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to import repositories. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -293,8 +308,17 @@ export default function EditPortfolio() {
       <div className="flex-1 flex overflow-hidden">
         {/* Block Palette Sidebar */}
         <div className="w-64 border-r bg-muted/30 p-4 overflow-y-auto">
-          <BlockPalette 
-            onAddBlock={(type: 'bio' | 'skills' | 'projects' | 'blog' | 'testimonials' | 'contact' | 'resume') => {
+          <BlockPalette
+            onAddBlock={(
+              type:
+                | 'bio'
+                | 'skills'
+                | 'projects'
+                | 'blog'
+                | 'testimonials'
+                | 'contact'
+                | 'resume'
+            ) => {
               const newBlock: PortfolioBlock = {
                 id: `block-${Date.now()}`,
                 type,
@@ -310,7 +334,11 @@ export default function EditPortfolio() {
 
         {/* Main Editor Area */}
         <div className="flex-1 flex flex-col">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="flex-1 flex flex-col"
+          >
             <div className="border-b px-6 py-3">
               <div className="flex items-center justify-between">
                 <TabsList>
@@ -321,9 +349,13 @@ export default function EditPortfolio() {
                 {/* Preview Mode Controls */}
                 {activeTab === 'preview' && (
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm text-muted-foreground">Preview:</span>
+                    <span className="text-sm text-muted-foreground">
+                      Preview:
+                    </span>
                     <Button
-                      variant={previewMode === 'desktop' ? 'default' : 'outline'}
+                      variant={
+                        previewMode === 'desktop' ? 'default' : 'outline'
+                      }
                       size="sm"
                       onClick={() => setPreviewMode('desktop')}
                     >
@@ -350,14 +382,14 @@ export default function EditPortfolio() {
 
             <TabsContent value="editor" className="flex-1 flex m-0 p-0">
               <div className="flex-1 p-6 overflow-y-auto">
-                <DragEditor 
-                  blocks={blocks} 
+                <DragEditor
+                  blocks={blocks}
                   onBlocksUpdate={handleBlockUpdate}
                   selectedBlockId={selectedBlockId || undefined}
                   onBlockSelect={handleBlockSelect}
                 />
               </div>
-              
+
               {/* Property Panel */}
               {selectedBlockId && (
                 <div className="w-80 border-l bg-muted/30 p-4 overflow-y-auto">
@@ -365,7 +397,9 @@ export default function EditPortfolio() {
                     block={blocks.find(b => b.id === selectedBlockId)}
                     onUpdateBlock={(content: Record<string, any>) => {
                       const updatedBlocks = blocks.map(block =>
-                        block.id === selectedBlockId ? { ...block, content } : block
+                        block.id === selectedBlockId
+                          ? { ...block, content }
+                          : block
                       );
                       handleBlockUpdate(updatedBlocks);
                     }}
@@ -375,9 +409,14 @@ export default function EditPortfolio() {
               )}
             </TabsContent>
 
-            <TabsContent value="preview" className="flex-1 m-0 p-6 overflow-y-auto">
+            <TabsContent
+              value="preview"
+              className="flex-1 m-0 p-6 overflow-y-auto"
+            >
               <div className="flex justify-center">
-                <div className={`transition-all duration-300 ${getPreviewWidth()}`}>
+                <div
+                  className={`transition-all duration-300 ${getPreviewWidth()}`}
+                >
                   <LivePreview blocks={blocks} previewMode={previewMode} />
                 </div>
               </div>
@@ -399,7 +438,10 @@ export default function EditPortfolio() {
         <div className="flex items-center space-x-4">
           <span>{blocks.length} blocks</span>
           {hasUnsavedChanges && (
-            <Badge variant="outline" className="text-orange-600 border-orange-600">
+            <Badge
+              variant="outline"
+              className="text-orange-600 border-orange-600"
+            >
               Unsaved changes
             </Badge>
           )}

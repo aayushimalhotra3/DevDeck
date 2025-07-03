@@ -47,7 +47,9 @@ export const PortfolioCardSkeleton: React.FC = () => {
 };
 
 // Portfolio Block Skeleton for Editor
-export const BlockSkeleton: React.FC<{ type?: string }> = ({ type = 'default' }) => {
+export const BlockSkeleton: React.FC<{ type?: string }> = ({
+  type = 'default',
+}) => {
   const getSkeletonContent = () => {
     switch (type) {
       case 'bio':
@@ -109,9 +111,7 @@ export const BlockSkeleton: React.FC<{ type?: string }> = ({ type = 'default' })
 
   return (
     <Card className="animate-pulse">
-      <CardContent className="p-6">
-        {getSkeletonContent()}
-      </CardContent>
+      <CardContent className="p-6">{getSkeletonContent()}</CardContent>
     </Card>
   );
 };
@@ -153,9 +153,9 @@ export const FormSkeleton: React.FC<{ fields?: number }> = ({ fields = 4 }) => {
 };
 
 // Table Skeleton
-export const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({ 
-  rows = 5, 
-  cols = 4 
+export const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({
+  rows = 5,
+  cols = 4,
 }) => {
   return (
     <div className="space-y-4">
@@ -178,24 +178,26 @@ export const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({
 };
 
 // Loading Spinner Component
-export const LoadingSpinner: React.FC<{ 
+export const LoadingSpinner: React.FC<{
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }> = ({ size = 'md', className = '' }) => {
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-8 h-8',
-    lg: 'w-12 h-12'
+    lg: 'w-12 h-12',
   };
 
   return (
-    <div className={`animate-spin rounded-full border-2 border-gray-300 border-t-blue-600 ${sizeClasses[size]} ${className}`}></div>
+    <div
+      className={`animate-spin rounded-full border-2 border-gray-300 border-t-blue-600 ${sizeClasses[size]} ${className}`}
+    ></div>
   );
 };
 
 // Full Page Loading
-export const FullPageLoading: React.FC<{ message?: string }> = ({ 
-  message = 'Loading...' 
+export const FullPageLoading: React.FC<{ message?: string }> = ({
+  message = 'Loading...',
 }) => {
   return (
     <div className="fixed inset-0 bg-white bg-opacity-80 flex items-center justify-center z-50">
@@ -208,7 +210,9 @@ export const FullPageLoading: React.FC<{ message?: string }> = ({
 };
 
 // Animated Loading Dots
-export const LoadingDots: React.FC<{ className?: string }> = ({ className = '' }) => {
+export const LoadingDots: React.FC<{ className?: string }> = ({
+  className = '',
+}) => {
   return (
     <div className={`flex space-x-1 ${className}`}>
       {[...Array(3)].map((_, i) => (
@@ -217,12 +221,12 @@ export const LoadingDots: React.FC<{ className?: string }> = ({ className = '' }
           className="w-2 h-2 bg-blue-600 rounded-full"
           animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.7, 1, 0.7]
+            opacity: [0.7, 1, 0.7],
           }}
           transition={{
             duration: 1,
             repeat: Infinity,
-            delay: i * 0.2
+            delay: i * 0.2,
           }}
         />
       ))}
@@ -231,7 +235,7 @@ export const LoadingDots: React.FC<{ className?: string }> = ({ className = '' }
 };
 
 // Progress Bar
-export const ProgressBar: React.FC<{ 
+export const ProgressBar: React.FC<{
   progress: number;
   className?: string;
   showPercentage?: boolean;
@@ -277,11 +281,7 @@ export const EmptyState: React.FC<{
 }> = ({ icon, title, description, action }) => {
   return (
     <div className="text-center py-12">
-      {icon && (
-        <div className="mx-auto mb-4 text-gray-300">
-          {icon}
-        </div>
-      )}
+      {icon && <div className="mx-auto mb-4 text-gray-300">{icon}</div>}
       <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
       <p className="text-gray-600 mb-4 max-w-md mx-auto">{description}</p>
       {action}
@@ -294,16 +294,21 @@ export const ErrorState: React.FC<{
   title?: string;
   description?: string;
   onRetry?: () => void;
-}> = ({ 
+}> = ({
   title = 'Something went wrong',
   description = 'We encountered an error while loading this content.',
-  onRetry
+  onRetry,
 }) => {
   return (
     <div className="text-center py-12">
       <div className="mx-auto mb-4 w-12 h-12 text-red-500">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+          />
         </svg>
       </div>
       <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>

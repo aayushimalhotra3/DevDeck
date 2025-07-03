@@ -9,7 +9,14 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Github, ExternalLink, Mail, Twitter, Linkedin, MapPin } from 'lucide-react';
+import {
+  Github,
+  ExternalLink,
+  Mail,
+  Twitter,
+  Linkedin,
+  MapPin,
+} from 'lucide-react';
 
 interface PortfolioData {
   user: {
@@ -71,8 +78,16 @@ export async function generateMetadata({
 
   return {
     title: `${user.name} - Developer Portfolio`,
-    description: user.bio || `Check out ${user.name}'s developer portfolio on DevDeck`,
-    keywords: ['developer', 'portfolio', 'github', 'projects', user.name, params.username],
+    description:
+      user.bio || `Check out ${user.name}'s developer portfolio on DevDeck`,
+    keywords: [
+      'developer',
+      'portfolio',
+      'github',
+      'projects',
+      user.name,
+      params.username,
+    ],
     authors: [{ name: user.name }],
     creator: user.name,
     openGraph: {
@@ -164,15 +179,15 @@ export default async function PreviewPortfolio({
             />
             <div className="absolute -bottom-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
           </div>
-          
+
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-2">
             {user.name}
           </h1>
-          
+
           <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-4">
             @{user.username}
           </p>
-          
+
           {user.bio && (
             <p className="text-base sm:text-lg text-gray-700 dark:text-gray-400 max-w-3xl mx-auto mb-6 leading-relaxed">
               {user.bio}
@@ -242,7 +257,10 @@ export default async function PreviewPortfolio({
             switch (block.type) {
               case 'projects':
                 return (
-                  <Card key={block.id} className="col-span-full hover:shadow-lg transition-shadow duration-300">
+                  <Card
+                    key={block.id}
+                    className="col-span-full hover:shadow-lg transition-shadow duration-300"
+                  >
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-xl">
                         🚀 Featured Projects
@@ -255,7 +273,10 @@ export default async function PreviewPortfolio({
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                         {/* Project cards will be rendered here */}
                         {Array.from({ length: 3 }).map((_, index) => (
-                          <div key={index} className="group p-4 lg:p-6 border rounded-lg hover:border-primary/50 transition-colors duration-200">
+                          <div
+                            key={index}
+                            className="group p-4 lg:p-6 border rounded-lg hover:border-primary/50 transition-colors duration-200"
+                          >
                             <div className="aspect-video bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg mb-4 flex items-center justify-center">
                               <Github className="w-8 h-8 text-gray-400" />
                             </div>
@@ -263,15 +284,26 @@ export default async function PreviewPortfolio({
                               Sample Project {index + 1}
                             </h3>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                              A description of the project goes here. This is a sample project description.
+                              A description of the project goes here. This is a
+                              sample project description.
                             </p>
                             <div className="flex flex-wrap gap-1 mb-3">
-                              <Badge variant="secondary" className="text-xs">React</Badge>
-                              <Badge variant="secondary" className="text-xs">TypeScript</Badge>
-                              <Badge variant="secondary" className="text-xs">Next.js</Badge>
+                              <Badge variant="secondary" className="text-xs">
+                                React
+                              </Badge>
+                              <Badge variant="secondary" className="text-xs">
+                                TypeScript
+                              </Badge>
+                              <Badge variant="secondary" className="text-xs">
+                                Next.js
+                              </Badge>
                             </div>
                             <div className="flex gap-2">
-                              <Button size="sm" variant="outline" className="flex-1">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="flex-1"
+                              >
                                 <ExternalLink className="w-3 h-3 mr-1" />
                                 Live Demo
                               </Button>
@@ -288,9 +320,14 @@ export default async function PreviewPortfolio({
 
               case 'skills':
                 return (
-                  <Card key={block.id} className="hover:shadow-lg transition-shadow duration-300">
+                  <Card
+                    key={block.id}
+                    className="hover:shadow-lg transition-shadow duration-300"
+                  >
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">💻 Skills & Technologies</CardTitle>
+                      <CardTitle className="flex items-center gap-2">
+                        💻 Skills & Technologies
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="flex flex-wrap gap-2">
@@ -306,7 +343,11 @@ export default async function PreviewPortfolio({
                           'MongoDB',
                           'PostgreSQL',
                         ].map(skill => (
-                          <Badge key={skill} variant="outline" className="hover:bg-primary hover:text-primary-foreground transition-colors cursor-default">
+                          <Badge
+                            key={skill}
+                            variant="outline"
+                            className="hover:bg-primary hover:text-primary-foreground transition-colors cursor-default"
+                          >
                             {skill}
                           </Badge>
                         ))}
@@ -317,18 +358,38 @@ export default async function PreviewPortfolio({
 
               case 'blog':
                 return (
-                  <Card key={block.id} className="hover:shadow-lg transition-shadow duration-300">
+                  <Card
+                    key={block.id}
+                    className="hover:shadow-lg transition-shadow duration-300"
+                  >
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">📚 Latest Blog Posts</CardTitle>
+                      <CardTitle className="flex items-center gap-2">
+                        📚 Latest Blog Posts
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         {[
-                          { title: 'Building Modern Web Apps', date: '2 days ago', readTime: '5 min read' },
-                          { title: 'Understanding React Hooks', date: '1 week ago', readTime: '8 min read' },
-                          { title: 'TypeScript Best Practices', date: '2 weeks ago', readTime: '6 min read' },
+                          {
+                            title: 'Building Modern Web Apps',
+                            date: '2 days ago',
+                            readTime: '5 min read',
+                          },
+                          {
+                            title: 'Understanding React Hooks',
+                            date: '1 week ago',
+                            readTime: '8 min read',
+                          },
+                          {
+                            title: 'TypeScript Best Practices',
+                            date: '2 weeks ago',
+                            readTime: '6 min read',
+                          },
                         ].map((post, index) => (
-                          <div key={index} className="group border-b last:border-b-0 pb-3 last:pb-0 hover:bg-accent/50 -mx-2 px-2 py-2 rounded transition-colors cursor-pointer">
+                          <div
+                            key={index}
+                            className="group border-b last:border-b-0 pb-3 last:pb-0 hover:bg-accent/50 -mx-2 px-2 py-2 rounded transition-colors cursor-pointer"
+                          >
                             <h4 className="font-medium group-hover:text-primary transition-colors mb-1">
                               {post.title}
                             </h4>
@@ -346,20 +407,40 @@ export default async function PreviewPortfolio({
 
               case 'experience':
                 return (
-                  <Card key={block.id} className="hover:shadow-lg transition-shadow duration-300">
+                  <Card
+                    key={block.id}
+                    className="hover:shadow-lg transition-shadow duration-300"
+                  >
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">💼 Experience</CardTitle>
+                      <CardTitle className="flex items-center gap-2">
+                        💼 Experience
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         {[
-                          { company: 'Tech Corp', role: 'Senior Developer', period: '2022 - Present' },
-                          { company: 'StartupXYZ', role: 'Full Stack Developer', period: '2020 - 2022' },
+                          {
+                            company: 'Tech Corp',
+                            role: 'Senior Developer',
+                            period: '2022 - Present',
+                          },
+                          {
+                            company: 'StartupXYZ',
+                            role: 'Full Stack Developer',
+                            period: '2020 - 2022',
+                          },
                         ].map((job, index) => (
-                          <div key={index} className="border-l-2 border-primary/20 pl-4">
+                          <div
+                            key={index}
+                            className="border-l-2 border-primary/20 pl-4"
+                          >
                             <h4 className="font-medium">{job.role}</h4>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{job.company}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-500">{job.period}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {job.company}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-500">
+                              {job.period}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -369,9 +450,14 @@ export default async function PreviewPortfolio({
 
               default:
                 return (
-                  <Card key={block.id} className="hover:shadow-lg transition-shadow duration-300">
+                  <Card
+                    key={block.id}
+                    className="hover:shadow-lg transition-shadow duration-300"
+                  >
                     <CardContent className="p-6">
-                      <p className="text-gray-600 dark:text-gray-400">Unknown block type: {block.type}</p>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        Unknown block type: {block.type}
+                      </p>
                     </CardContent>
                   </Card>
                 );

@@ -2,7 +2,13 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -154,19 +160,34 @@ class ErrorBoundary extends Component<Props, State> {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onClick={this.handleRetry} className="flex items-center gap-2">
+                <Button
+                  onClick={this.handleRetry}
+                  className="flex items-center gap-2"
+                >
                   <RefreshCw className="w-4 h-4" />
                   Try Again
                 </Button>
-                <Button variant="outline" onClick={this.handleReload} className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={this.handleReload}
+                  className="flex items-center gap-2"
+                >
                   <RefreshCw className="w-4 h-4" />
                   Reload Page
                 </Button>
-                <Button variant="outline" onClick={this.handleGoHome} className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={this.handleGoHome}
+                  className="flex items-center gap-2"
+                >
                   <Home className="w-4 h-4" />
                   Go Home
                 </Button>
-                <Button variant="outline" onClick={this.handleReportBug} className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={this.handleReportBug}
+                  className="flex items-center gap-2"
+                >
                   <Bug className="w-4 h-4" />
                   Report Bug
                 </Button>
@@ -174,10 +195,12 @@ class ErrorBoundary extends Component<Props, State> {
 
               {/* Help Text */}
               <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-                <p>If this problem persists, please contact our support team.</p>
+                <p>
+                  If this problem persists, please contact our support team.
+                </p>
                 <p className="mt-1">
-                  <a 
-                    href="mailto:support@devdeck.com" 
+                  <a
+                    href="mailto:support@devdeck.com"
                     className="text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     support@devdeck.com
@@ -201,11 +224,11 @@ export const useErrorHandler = () => {
   const handleError = React.useCallback(
     (error: Error, context?: string) => {
       console.error(`Error in ${context || 'component'}:`, error);
-      
+
       toast({
-        title: "Something went wrong",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
+        title: 'Something went wrong',
+        description: error.message || 'An unexpected error occurred',
+        variant: 'destructive',
       });
 
       // Log to external service in production

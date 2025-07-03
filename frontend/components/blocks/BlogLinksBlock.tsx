@@ -30,7 +30,7 @@ interface BlogLinksBlockProps {
 const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
   blogPosts = [],
   isEditing = false,
-  onUpdate
+  onUpdate,
 }) => {
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -42,7 +42,7 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
       description: '',
       url: '',
       publishedDate: new Date().toISOString().split('T')[0],
-      tags: []
+      tags: [],
     };
     setEditingPost(newPost);
     setShowAddForm(true);
@@ -52,7 +52,7 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
     if (!post.title || !post.url) return;
 
     const updatedPosts = blogPosts.find(p => p.id === post.id)
-      ? blogPosts.map(p => p.id === post.id ? post : p)
+      ? blogPosts.map(p => (p.id === post.id ? post : p))
       : [...blogPosts, post];
 
     onUpdate?.(updatedPosts);
@@ -69,11 +69,15 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
-  const BlogPostForm = ({ post, onSave, onCancel }: {
+  const BlogPostForm = ({
+    post,
+    onSave,
+    onCancel,
+  }: {
     post: BlogPost;
     onSave: (post: BlogPost) => void;
     onCancel: () => void;
@@ -85,7 +89,7 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
       if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
         setFormData({
           ...formData,
-          tags: [...formData.tags, tagInput.trim()]
+          tags: [...formData.tags, tagInput.trim()],
         });
         setTagInput('');
       }
@@ -94,7 +98,7 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
     const handleRemoveTag = (tagToRemove: string) => {
       setFormData({
         ...formData,
-        tags: formData.tags.filter(tag => tag !== tagToRemove)
+        tags: formData.tags.filter(tag => tag !== tagToRemove),
       });
     };
 
@@ -109,54 +113,70 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
           <Input
             placeholder="Blog post title"
             value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            onChange={e => setFormData({ ...formData, title: e.target.value })}
           />
           <Input
             placeholder="Blog post URL"
             value={formData.url}
-            onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+            onChange={e => setFormData({ ...formData, url: e.target.value })}
           />
           <Textarea
             placeholder="Brief description..."
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={e =>
+              setFormData({ ...formData, description: e.target.value })
+            }
             rows={3}
           />
           <div className="grid grid-cols-2 gap-4">
-            <Input
-              type="date"
-              label="Published Date"
-              value={formData.publishedDate}
-              onChange={(e) => setFormData({ ...formData, publishedDate: e.target.value })}
-            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Published Date
+              </label>
+              <Input
+                type="date"
+                value={formData.publishedDate}
+                onChange={e =>
+                  setFormData({ ...formData, publishedDate: e.target.value })
+                }
+              />
+            </div>
             <Input
               placeholder="Read time (e.g., 5 min)"
               value={formData.readTime || ''}
-              onChange={(e) => setFormData({ ...formData, readTime: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, readTime: e.target.value })
+              }
             />
           </div>
           <Input
             placeholder="Thumbnail URL (optional)"
             value={formData.thumbnail || ''}
-            onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
+            onChange={e =>
+              setFormData({ ...formData, thumbnail: e.target.value })
+            }
           />
-          
+
           {/* Tags */}
           <div>
             <div className="flex gap-2 mb-2">
               <Input
                 placeholder="Add tag"
                 value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
+                onChange={e => setTagInput(e.target.value)}
+                onKeyPress={e => e.key === 'Enter' && handleAddTag()}
               />
               <Button type="button" onClick={handleAddTag}>
                 Add
               </Button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {formData.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+              {formData.tags.map(tag => (
+                <Badge
+                  key={tag}
+                  variant="secondary"
+                  className="flex items-center gap-1"
+                >
                   {tag}
                   <X
                     className="w-3 h-3 cursor-pointer"
@@ -166,9 +186,12 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
               ))}
             </div>
           </div>
-          
+
           <div className="flex gap-2">
-            <Button onClick={() => onSave(formData)} disabled={!formData.title || !formData.url}>
+            <Button
+              onClick={() => onSave(formData)}
+              disabled={!formData.title || !formData.url}
+            >
               Save
             </Button>
             <Button variant="outline" onClick={onCancel}>
@@ -216,13 +239,15 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
               <BookOpen className="w-12 h-12 mx-auto mb-4 text-gray-300" />
               <p>No blog posts yet.</p>
               {isEditing && (
-                <p className="text-sm mt-2">Click "Add Blog Post" to get started.</p>
+                <p className="text-sm mt-2">
+                  Click "Add Blog Post" to get started.
+                </p>
               )}
             </div>
           ) : (
             <div className="space-y-4">
               <AnimatePresence>
-                {blogPosts.map((post) => (
+                {blogPosts.map(post => (
                   <motion.div
                     key={post.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -255,7 +280,7 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
                             </div>
                           </div>
                         )}
-                        
+
                         <div className="flex gap-4">
                           {post.thumbnail && (
                             <div className="flex-shrink-0">
@@ -266,7 +291,7 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
                               />
                             </div>
                           )}
-                          
+
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between mb-2">
                               <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">
@@ -281,13 +306,13 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
                                 <ExternalLink className="w-4 h-4" />
                               </a>
                             </div>
-                            
+
                             {post.description && (
                               <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                                 {post.description}
                               </p>
                             )}
-                            
+
                             <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
                               <div className="flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />
@@ -306,11 +331,15 @@ const BlogLinksBlock: React.FC<BlogLinksBlockProps> = ({
                                 </div>
                               )}
                             </div>
-                            
+
                             {post.tags.length > 0 && (
                               <div className="flex flex-wrap gap-1">
-                                {post.tags.map((tag) => (
-                                  <Badge key={tag} variant="outline" className="text-xs">
+                                {post.tags.map(tag => (
+                                  <Badge
+                                    key={tag}
+                                    variant="outline"
+                                    className="text-xs"
+                                  >
                                     {tag}
                                   </Badge>
                                 ))}

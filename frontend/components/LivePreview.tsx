@@ -10,12 +10,28 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Github, ExternalLink, Globe, User, Mail, MapPin, FileText, Download } from 'lucide-react';
+import {
+  Github,
+  ExternalLink,
+  Globe,
+  User,
+  Mail,
+  MapPin,
+  FileText,
+  Download,
+} from 'lucide-react';
 import { io, Socket } from 'socket.io-client';
 
 interface PortfolioBlock {
   id: string;
-  type: 'bio' | 'projects' | 'skills' | 'blog' | 'testimonials' | 'contact' | 'resume';
+  type:
+    | 'bio'
+    | 'projects'
+    | 'skills'
+    | 'blog'
+    | 'testimonials'
+    | 'contact'
+    | 'resume';
   content: any;
   position: { x: number; y: number };
 }
@@ -25,7 +41,10 @@ interface LivePreviewProps {
   previewMode?: 'desktop' | 'tablet' | 'mobile';
 }
 
-export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProps) {
+export function LivePreview({
+  blocks,
+  previewMode = 'desktop',
+}: LivePreviewProps) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
@@ -196,34 +215,41 @@ export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProp
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {(block.content?.testimonials || []).map((testimonial: any, index: number) => (
-                  <div key={index} className="border rounded-lg p-6 space-y-4">
-                    <div className="flex items-start space-x-4">
-                      {testimonial.avatar ? (
-                        <img
-                          src={testimonial.avatar}
-                          alt={testimonial.name}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                          <User className="w-6 h-6 text-gray-400" />
+                {(block.content?.testimonials || []).map(
+                  (testimonial: any, index: number) => (
+                    <div
+                      key={index}
+                      className="border rounded-lg p-6 space-y-4"
+                    >
+                      <div className="flex items-start space-x-4">
+                        {testimonial.avatar ? (
+                          <img
+                            src={testimonial.avatar}
+                            alt={testimonial.name}
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                            <User className="w-6 h-6 text-gray-400" />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <h4 className="font-semibold">{testimonial.name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {testimonial.role}{' '}
+                            {testimonial.company && 'at ' + testimonial.company}
+                          </p>
                         </div>
-                      )}
-                      <div className="flex-1">
-                        <h4 className="font-semibold">{testimonial.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {testimonial.role} {testimonial.company && `at ${testimonial.company}`}
-                        </p>
                       </div>
+                      <blockquote className="text-muted-foreground italic">
+                        &ldquo;{testimonial.content}&rdquo;
+                      </blockquote>
                     </div>
-                    <blockquote className="text-muted-foreground italic">
-                      "{testimonial.content}"
-                    </blockquote>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
-              {(!block.content?.testimonials || block.content.testimonials.length === 0) && (
+              {(!block.content?.testimonials ||
+                block.content.testimonials.length === 0) && (
                 <p className="text-muted-foreground text-center py-4">
                   Add testimonials to showcase client feedback...
                 </p>
@@ -240,13 +266,16 @@ export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProp
                 📧 {block.content?.title || 'Get in Touch'}
               </CardTitle>
               <CardDescription>
-                {block.content?.description || 'Let\'s work together'}
+                {block.content?.description || 'Let&apos;s work together'}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium mb-1">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium mb-1"
+                  >
                     Name *
                   </label>
                   <input
@@ -257,7 +286,10 @@ export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProp
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-1">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium mb-1"
+                  >
                     Email *
                   </label>
                   <input
@@ -269,7 +301,10 @@ export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProp
                 </div>
                 {block.content?.showPhone && (
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-medium mb-1">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium mb-1"
+                    >
                       Phone
                     </label>
                     <input
@@ -282,7 +317,10 @@ export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProp
                 )}
                 {block.content?.showCompany && (
                   <div>
-                    <label htmlFor="company" className="block text-sm font-medium mb-1">
+                    <label
+                      htmlFor="company"
+                      className="block text-sm font-medium mb-1"
+                    >
                       Company
                     </label>
                     <input
@@ -294,7 +332,10 @@ export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProp
                   </div>
                 )}
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-1">
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium mb-1"
+                  >
                     Message *
                   </label>
                   <textarea
@@ -329,7 +370,9 @@ export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProp
                   <FileText className="w-8 h-8 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">{block.content?.filename || 'Resume.pdf'}</h3>
+                  <h3 className="font-semibold">
+                    {block.content?.filename || 'Resume.pdf'}
+                  </h3>
                   <p className="text-sm text-muted-foreground">PDF Document</p>
                 </div>
                 <div className="flex gap-2 justify-center">
@@ -375,7 +418,7 @@ export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProp
   };
 
   const getPreviewContainerClass = () => {
-    const baseClass = "mx-auto transition-all duration-300";
+    const baseClass = 'mx-auto transition-all duration-300';
     switch (previewMode) {
       case 'mobile':
         return `${baseClass} max-w-sm`;
@@ -420,39 +463,59 @@ export function LivePreview({ blocks, previewMode = 'desktop' }: LivePreviewProp
       </div>
 
       {/* Portfolio Preview */}
-      <div className={`bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 rounded-lg min-h-96 ${
-        previewMode === 'mobile' ? 'p-4' : previewMode === 'tablet' ? 'p-6' : 'p-8'
-      }`}>
+      <div
+        className={`bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 rounded-lg min-h-96 ${
+          previewMode === 'mobile'
+            ? 'p-4'
+            : previewMode === 'tablet'
+              ? 'p-6'
+              : 'p-8'
+        }`}
+      >
         {blocks.length === 0 ? (
           <div className="text-center py-12">
-            <div className={`mb-4 ${
-              previewMode === 'mobile' ? 'text-4xl' : 'text-6xl'
-            }`}>🎨</div>
-            <h3 className={`font-semibold mb-2 ${
-              previewMode === 'mobile' ? 'text-lg' : 'text-xl'
-            }`}>
+            <div
+              className={`mb-4 ${
+                previewMode === 'mobile' ? 'text-4xl' : 'text-6xl'
+              }`}
+            >
+              🎨
+            </div>
+            <h3
+              className={`font-semibold mb-2 ${
+                previewMode === 'mobile' ? 'text-lg' : 'text-xl'
+              }`}
+            >
               Your Portfolio Preview
             </h3>
-            <p className={`text-muted-foreground ${
-              previewMode === 'mobile' ? 'text-sm' : 'text-base'
-            }`}>
+            <p
+              className={`text-muted-foreground ${
+                previewMode === 'mobile' ? 'text-sm' : 'text-base'
+              }`}
+            >
               Add blocks in the editor to see your portfolio come to life!
             </p>
           </div>
         ) : (
-          <div className={`space-y-6 ${
-            previewMode === 'mobile' ? 'space-y-4' : 'space-y-6'
-          }`}>{blocks.map(renderBlock)}</div>
+          <div
+            className={`space-y-6 ${
+              previewMode === 'mobile' ? 'space-y-4' : 'space-y-6'
+            }`}
+          >
+            {blocks.map(renderBlock)}
+          </div>
         )}
       </div>
 
       {/* Preview Info */}
       <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-        <p className={`text-blue-700 dark:text-blue-300 ${
-          previewMode === 'mobile' ? 'text-xs' : 'text-sm'
-        }`}>
-          💡 This is how your portfolio will look to visitors in {previewMode} view. Changes are
-          updated in real-time!
+        <p
+          className={`text-blue-700 dark:text-blue-300 ${
+            previewMode === 'mobile' ? 'text-xs' : 'text-sm'
+          }`}
+        >
+          💡 This is how your portfolio will look to visitors in {previewMode}{' '}
+          view. Changes are updated in real-time!
         </p>
       </div>
     </div>
