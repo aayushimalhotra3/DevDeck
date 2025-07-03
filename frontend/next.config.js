@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+// Force fresh build to clear Vercel cache
 const nextConfig = {
   env: {
     NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
