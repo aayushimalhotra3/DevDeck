@@ -28,7 +28,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { FeatureTooltip, Tooltip } from './Tooltip';
 import { AnimatedContainer, ScaleOnHover, LoadingSpinner } from './AnimatedContainer';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface PortfolioSharingProps {
   portfolioId: string;
