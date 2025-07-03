@@ -1,6 +1,20 @@
 # DevDeck 🚀
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/kathanparagshah/DevDeck)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/devdeck)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+
 A modern platform for developers to create beautiful, interactive portfolios from their GitHub repositories with real-time editing capabilities.
+
+## 🌐 Live Demo
+
+- **Frontend**: [https://devdeck.vercel.app](https://devdeck.vercel.app)
+- **API**: [https://devdeck-api.railway.app](https://devdeck-api.railway.app)
+- **Documentation**: [https://devdeck.vercel.app/docs](https://devdeck.vercel.app/docs)
 
 ## ✨ Features
 
