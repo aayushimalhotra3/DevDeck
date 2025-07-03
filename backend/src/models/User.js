@@ -125,10 +125,11 @@ const userSchema = new mongoose.Schema({
   }
 })
 
-// Indexes
-userSchema.index({ username: 1 })
-userSchema.index({ email: 1 })
-userSchema.index({ githubId: 1 })
+// Indexes (removed explicit definitions to avoid duplicates with unique: true)
+// The following indexes are automatically created by unique: true:
+// - username: 1
+// - email: 1  
+// - githubId: 1
 userSchema.index({ 'portfolio.isPublished': 1 })
 
 // Virtual for portfolio URL

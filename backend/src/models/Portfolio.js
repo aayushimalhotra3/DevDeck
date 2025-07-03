@@ -188,8 +188,8 @@ const portfolioSchema = new mongoose.Schema({
   }
 })
 
-// Indexes
-portfolioSchema.index({ userId: 1 })
+// Indexes (removed userId index to avoid duplicate with unique: true)
+// userId index is automatically created by unique: true
 portfolioSchema.index({ status: 1 })
 portfolioSchema.index({ 'publishing.publishedAt': -1 })
 portfolioSchema.index({ 'stats.views': -1 })
