@@ -14,7 +14,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Configuration
-PRODUCTION_URL="${PRODUCTION_URL:-https://your-app.onrender.com}"
+PRODUCTION_URL="${PRODUCTION_URL:-https://devdeck-1.onrender.com}"
 TEST_EMAIL="${TEST_EMAIL:-test@example.com}"
 TEST_PASSWORD="${TEST_PASSWORD:-TestPassword123!}"
 TEST_RESULTS_FILE="logs/production-api-test-results.json"

@@ -12,9 +12,9 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-PRODUCTION_URL="${PRODUCTION_URL:-https://your-app.onrender.com}"
-BACKEND_URL="${BACKEND_URL:-$PRODUCTION_URL}"
-FRONTEND_URL="${FRONTEND_URL:-$PRODUCTION_URL}"
+PRODUCTION_URL="${PRODUCTION_URL:-https://devdeck-1.onrender.com}"
+BACKEND_URL="${BACKEND_URL:-https://devdeck-1.onrender.com}"
+FRONTEND_URL="${FRONTEND_URL:-https://devdeck-rho.vercel.app}"
 MONITOR_INTERVAL="${MONITOR_INTERVAL:-300}" # 5 minutes default
 LOG_FILE="logs/production-monitor.log"
 ALERT_WEBHOOK="${ALERT_WEBHOOK:-}" # Slack/Discord webhook for alerts
