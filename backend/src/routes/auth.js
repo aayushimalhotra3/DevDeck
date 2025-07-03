@@ -44,7 +44,6 @@ router.post('/github', (req, res) => {
 })
 */
 
-/*
 /**
  * GitHub OAuth callback endpoint
  * 
