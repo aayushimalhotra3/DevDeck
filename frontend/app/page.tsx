@@ -215,12 +215,12 @@ export default function LandingPage() {
               <Link href="/browse" className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
                 Browse
               </Link>
-              <Link href="/auth/signin">
+              <Link href="/login">
                 <Button variant="outline" size="sm">
                   Sign In
                 </Button>
               </Link>
-              <Link href="/auth/signin">
+              <Link href="/login">
                 <Button size="sm" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
                   Get Started
                 </Button>
@@ -254,7 +254,7 @@ export default function LandingPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-12">
-            <Link href="/auth/signin">
+            <Link href="/login">
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
@@ -389,7 +389,7 @@ export default function LandingPage() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link href="/auth/signin">
+            <Link href="/login">
               <Button 
                 size="lg" 
                 variant="secondary" 

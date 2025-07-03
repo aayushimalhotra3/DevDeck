@@ -7,6 +7,8 @@ const { asyncHandler } = require('../middleware/errorHandler')
 
 const router = express.Router()
 
+// COMMENTED OUT: Using NextAuth.js for serverless authentication instead of Express routes
+/*
 /**
  * GitHub OAuth initiation endpoint
  * 
@@ -40,7 +42,9 @@ router.post('/github', (req, res) => {
     message: 'Redirect to GitHub for authentication'
   })
 })
+*/
 
+/*
 /**
  * GitHub OAuth callback endpoint
  * 
@@ -241,9 +245,10 @@ router.post('/github/callback', validateGitHubCallback, asyncHandler(async (req,
       success: false,
       message: 'Authentication failed',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    })
+    })}
   }
 }))
+*/
 
 // @desc    Logout user
 // @route   POST /auth/logout

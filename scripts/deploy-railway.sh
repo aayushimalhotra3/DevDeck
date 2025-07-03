@@ -99,13 +99,29 @@ REQUIRED_VARS=(
     "JWT_SECRET"
     "MONGODB_URI"
     "FRONTEND_URL"
+    "NODE_ENV"
+    "TRUST_PROXY"
+)
+
+OPTIONAL_VARS=(
+    "SENTRY_DSN"
+    "REDIS_URL"
+    "LOG_LEVEL"
+    "RATE_LIMIT_MAX_REQUESTS"
 )
 
 MISSING_VARS=()
+MISSING_OPTIONAL=()
 
 for var in "${REQUIRED_VARS[@]}"; do
     if ! railway variables get "$var" &> /dev/null; then
         MISSING_VARS+=("$var")
+    fi
+done
+
+for var in "${OPTIONAL_VARS[@]}"; do
+    if ! railway variables get "$var" &> /dev/null; then
+        MISSING_OPTIONAL+=("$var")
     fi
 done
 
@@ -124,6 +140,13 @@ if [ ${#MISSING_VARS[@]} -ne 0 ]; then
         print_error "Deployment cancelled. Please set required environment variables."
         exit 1
     fi
+fi
+
+if [ ${#MISSING_OPTIONAL[@]} -ne 0 ]; then
+    print_warning "Missing optional environment variables (recommended for production):"
+    for var in "${MISSING_OPTIONAL[@]}"; do
+        echo "  - $var"
+    done
 fi
 
 # Deploy to Railway
@@ -157,24 +180,47 @@ else
     exit 1
 fi
 
-# Optional: Check deployment health
-read -p "Do you want to check deployment health? (y/n): " -n 1 -r
+# Enhanced deployment health checks
+read -p "Do you want to run comprehensive health checks? (y/n): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    print_status "Checking deployment health..."
+    print_status "Running comprehensive health checks..."
     
-    # Wait a moment for deployment to be ready
-    sleep 10
+    # Wait for deployment to be ready
+    print_status "Waiting for deployment to stabilize..."
+    sleep 15
     
     if [ ! -z "$DEPLOYMENT_URL" ] && [ "$DEPLOYMENT_URL" != "null" ]; then
         # Test health endpoint
-        if curl -f "$DEPLOYMENT_URL/api/health" &> /dev/null; then
-            print_success "Health check passed!"
+        print_status "Testing health endpoint..."
+        if curl -f -s "$DEPLOYMENT_URL/health" | jq -e '.status == "healthy"' &> /dev/null; then
+            print_success "✅ Health check passed!"
         else
-            print_warning "Health check failed. Please check the logs."
+            print_warning "⚠️  Health check failed. Checking detailed status..."
+            curl -s "$DEPLOYMENT_URL/health" | jq '.' || echo "Health endpoint not responding"
         fi
+        
+        # Test database connectivity
+        print_status "Testing database connectivity..."
+        DB_STATUS=$(curl -s "$DEPLOYMENT_URL/health" | jq -r '.services.database.status' 2>/dev/null || echo "unknown")
+        if [ "$DB_STATUS" = "connected" ]; then
+            print_success "✅ Database connection verified!"
+        else
+            print_warning "⚠️  Database connection issue: $DB_STATUS"
+        fi
+        
+        # Test API endpoints
+        print_status "Testing core API endpoints..."
+        if curl -f -s "$DEPLOYMENT_URL/api/portfolio/public/test" &> /dev/null; then
+            print_success "✅ API endpoints responding!"
+        else
+            print_warning "⚠️  Some API endpoints may not be responding"
+        fi
+        
     else
         print_warning "Could not determine deployment URL for health check."
+        print_status "Attempting to get URL from Railway status..."
+        railway status
     fi
 fi
 
