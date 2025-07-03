@@ -8,7 +8,6 @@ const { asyncHandler } = require('../middleware/errorHandler')
 const router = express.Router()
 
 // COMMENTED OUT: Using NextAuth.js for serverless authentication instead of Express routes
-/*
 /**
  * GitHub OAuth initiation endpoint
  * 
