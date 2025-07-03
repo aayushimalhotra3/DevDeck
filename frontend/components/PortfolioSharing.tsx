@@ -371,7 +371,7 @@ export function PortfolioSharing({
                       className="flex items-center gap-2"
                     >
                       {isGeneratingQR ? (
-                        <LoadingSpinner size="sm" />
+                        <LoadingSpinner size={16} />
                       ) : (
                         <QrCode className="w-4 h-4" />
                       )}

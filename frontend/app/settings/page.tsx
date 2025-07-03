@@ -44,6 +44,9 @@ export default function Settings() {
   });
 
   const [theme, setTheme] = useState({
+    mode: 'system' as 'light' | 'dark' | 'system',
+    primaryColor: '#3b82f6',
+    accentColor: '#8b5cf6',
     colorScheme: 'blue',
     fontFamily: 'inter',
     borderRadius: 'medium',
