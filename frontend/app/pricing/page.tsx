@@ -301,8 +301,8 @@ const PricingPage: React.FC = () => {
                       <Link
                         href={
                           plan.name === 'Free'
-                            ? '/auth/signin'
-                            : '/auth/signin?plan=' + plan.name.toLowerCase()
+                            ? '/login'
+                            : '/login?plan=' + plan.name.toLowerCase()
                         }
                       >
                         <Button
@@ -485,7 +485,7 @@ const PricingPage: React.FC = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center"
             variants={itemVariants}
           >
-            <Link href="/auth/signin">
+            <Link href="/login">
               <Button
                 size="lg"
                 variant="secondary"
