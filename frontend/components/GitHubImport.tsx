@@ -18,6 +18,7 @@ import {
   Loader2,
   CheckCircle
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface GitHubRepo {
   id: number;
@@ -205,10 +206,14 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
         <CardContent className="p-6">
           {/* Loading State or Refresh Button */}
           {loading && repos.length === 0 ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin mr-2" />
-              <span>Loading your repositories...</span>
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center justify-center py-8"
+            >
+              <Loader2 className="w-6 h-6 animate-spin mr-2 text-blue-600" />
+              <span className="text-muted-foreground">Loading your repositories...</span>
+            </motion.div>
           ) : (
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center space-x-2">
@@ -232,27 +237,45 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
           {repos.length > 0 && (
             <>
               {/* Controls */}
-              <div className="flex items-center justify-between mb-4">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="flex items-center justify-between mb-4"
+              >
                 <div className="flex items-center space-x-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSelectAll}
-                  >
-                    {selectedRepos.size === filteredRepos.length ? 'Deselect All' : 'Select All'}
-                  </Button>
-                  <span className="text-sm text-muted-foreground">
-                    {selectedRepos.size} of {filteredRepos.length} selected
-                  </span>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSelectAll}
+                    >
+                      {selectedRepos.size === filteredRepos.length ? 'Deselect All' : 'Select All'}
+                    </Button>
+                  </motion.div>
+                  <AnimatePresence mode="wait">
+                    <motion.span 
+                      key={selectedRepos.size}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="text-sm text-muted-foreground"
+                    >
+                      {selectedRepos.size} of {filteredRepos.length} selected
+                    </motion.span>
+                  </AnimatePresence>
                 </div>
                 
                 <div className="flex items-center space-x-2">
-                  <Input
-                    placeholder="Search repositories..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-64"
-                  />
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search repositories..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-64 pl-10"
+                    />
+                  </div>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as 'name' | 'stars' | 'updated')}
@@ -263,103 +286,168 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
                     <option value="name">Name</option>
                   </select>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Repository List */}
-              <div className="max-h-96 overflow-y-auto space-y-3">
-                {filteredRepos.map((repo) => (
-                  <Card
-                    key={repo.id}
-                    className={`cursor-pointer transition-all hover:shadow-md ${
-                      selectedRepos.has(repo.id) ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-                    }`}
-                    onClick={() => handleRepoToggle(repo.id)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-start space-x-3">
-                        <Checkbox
-                          checked={selectedRepos.has(repo.id)}
-                          onChange={() => handleRepoToggle(repo.id)}
-                          className="mt-1"
-                        />
+              <div className="max-h-96 overflow-y-auto">
+                <motion.div className="space-y-3">
+                  <AnimatePresence>
+                    {filteredRepos.map((repo, index) => (
+                      <motion.div
+                        key={repo.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ delay: index * 0.05 }}
+                        layout
+                      >
+                        <Card
+                          className={`cursor-pointer transition-all hover:shadow-md border-2 ${
+                            selectedRepos.has(repo.id) ? 'ring-2 ring-blue-500 bg-blue-50 border-blue-200' : 'hover:border-blue-200'
+                          }`}
+                          onClick={() => handleRepoToggle(repo.id)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-start space-x-3">
+                              <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <Checkbox
+                                  checked={selectedRepos.has(repo.id)}
+                                  onChange={() => handleRepoToggle(repo.id)}
+                                  className="mt-1"
+                                />
+                              </motion.div>
                         
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <h3 className="font-semibold text-lg truncate">{repo.name}</h3>
-                            <div className="flex items-center space-x-2">
-                              <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-                                <Star className="w-3 h-3" />
-                                <span>{repo.stargazers_count}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center space-x-2 mb-2">
+                                  <h3 className="font-semibold text-lg truncate flex items-center gap-2">
+                                    {repo.name}
+                                    {selectedRepos.has(repo.id) && (
+                                      <motion.div
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                      >
+                                        <CheckCircle className="w-4 h-4 text-green-600" />
+                                      </motion.div>
+                                    )}
+                                  </h3>
+                                  <div className="flex items-center space-x-2">
+                                    <motion.div 
+                                      className="flex items-center space-x-1 text-sm text-muted-foreground"
+                                      whileHover={{ scale: 1.05 }}
+                                    >
+                                      <Star className="w-3 h-3" />
+                                      <span>{repo.stargazers_count}</span>
+                                    </motion.div>
+                                    <motion.div 
+                                      className="flex items-center space-x-1 text-sm text-muted-foreground"
+                                      whileHover={{ scale: 1.05 }}
+                                    >
+                                      <GitFork className="w-3 h-3" />
+                                      <span>{repo.forks_count}</span>
+                                    </motion.div>
+                                  </div>
+                                </div>
+                                
+                                {repo.description && (
+                                  <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                                    {repo.description}
+                                  </p>
+                                )}
+                                
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center space-x-2 flex-wrap">
+                                    {repo.language && (
+                                      <Badge 
+                                        variant="secondary" 
+                                        className="text-xs"
+                                        style={{ 
+                                          backgroundColor: languageColors[repo.language] + '20',
+                                          color: languageColors[repo.language] || '#666'
+                                        }}
+                                      >
+                                        <Code className="w-3 h-3 mr-1" />
+                                        {repo.language}
+                                      </Badge>
+                                    )}
+                                    {repo.topics.slice(0, 3).map((topic) => (
+                                      <Badge key={topic} variant="outline" className="text-xs">
+                                        {topic}
+                                      </Badge>
+                                    ))}
+                                    {repo.topics.length > 3 && (
+                                      <Badge variant="outline" className="text-xs">
+                                        +{repo.topics.length - 3}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  
+                                  <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                                    <Calendar className="w-3 h-3" />
+                                    <span>{formatDate(repo.updated_at)}</span>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-                                <GitFork className="w-3 h-3" />
-                                <span>{repo.forks_count}</span>
-                              </div>
                             </div>
-                          </div>
-                          
-                          {repo.description && (
-                            <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                              {repo.description}
-                            </p>
-                          )}
-                          
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              {repo.language && (
-                                <Badge 
-                                  variant="secondary" 
-                                  className="text-xs"
-                                  style={{ 
-                                    backgroundColor: languageColors[repo.language] + '20',
-                                    color: languageColors[repo.language] || '#666'
-                                  }}
-                                >
-                                  <Code className="w-3 h-3 mr-1" />
-                                  {repo.language}
-                                </Badge>
-                              )}
-                              {repo.topics.slice(0, 3).map((topic) => (
-                                <Badge key={topic} variant="outline" className="text-xs">
-                                  {topic}
-                                </Badge>
-                              ))}
-                              {repo.topics.length > 3 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{repo.topics.length - 3}
-                                </Badge>
-                              )}
-                            </div>
-                            
-                            <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                              <Calendar className="w-3 h-3" />
-                              <span>{formatDate(repo.updated_at)}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
               </div>
 
               {/* Import Button */}
-              <div className="flex justify-end space-x-2 mt-6 pt-4 border-t">
-                <Button variant="outline" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={handleImport} 
-                  disabled={selectedRepos.size === 0 || importing}
-                >
-                  {importing ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  ) : (
-                    <Download className="w-4 h-4 mr-2" />
-                  )}
-                  Import {selectedRepos.size} Repositories
-                </Button>
-              </div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex justify-between items-center mt-6 pt-4 border-t"
+              >
+                <AnimatePresence mode="wait">
+                  <motion.p 
+                    key={selectedRepos.size}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="text-sm text-muted-foreground"
+                  >
+                    {selectedRepos.size} repositories selected
+                  </motion.p>
+                </AnimatePresence>
+                
+                <div className="flex space-x-2">
+                  <Button variant="outline" onClick={onClose}>
+                    Cancel
+                  </Button>
+                  <motion.div
+                    whileHover={{ scale: selectedRepos.size > 0 ? 1.05 : 1 }}
+                    whileTap={{ scale: selectedRepos.size > 0 ? 0.95 : 1 }}
+                  >
+                    <Button 
+                      onClick={handleImport} 
+                      disabled={selectedRepos.size === 0 || importing}
+                      className="min-w-[200px]"
+                      size="lg"
+                    >
+                      {importing ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          <span>Importing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Download className="w-4 h-4 mr-2" />
+                          Import {selectedRepos.size} Repositories
+                        </>
+                      )}
+                    </Button>
+                  </motion.div>
+                </div>
+              </motion.div>
             </>
           )}
         </CardContent>

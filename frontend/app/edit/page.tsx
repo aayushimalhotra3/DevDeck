@@ -33,6 +33,7 @@ export default function EditPortfolio() {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | undefined>(undefined);
   const [showGitHubImport, setShowGitHubImport] = useState(false);
   const autosaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
@@ -195,6 +196,7 @@ export default function EditPortfolio() {
 
       if (response.ok) {
         setHasUnsavedChanges(false);
+        setLastSaved(new Date());
         toast({
           title: "Saved!",
           description: "Your portfolio has been saved successfully.",
@@ -285,6 +287,7 @@ export default function EditPortfolio() {
         saving={saving}
         hasUnsavedChanges={hasUnsavedChanges}
         isAutoSaving={isAutoSaving}
+        lastSaved={lastSaved}
       />
 
       <div className="flex-1 flex overflow-hidden">

@@ -1,15 +1,11 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Github, ExternalLink, Star, GitFork } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Github, ExternalLink, Star, GitFork, Calendar, Eye } from 'lucide-react';
 
 interface Repository {
   id: number;
@@ -35,6 +31,7 @@ export function ProjectCard({
   showAddButton = false,
   onAddToPortfolio,
 }: ProjectCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -66,16 +63,23 @@ export function ProjectCard({
   };
 
   return (
-    <Card className="h-full hover:shadow-lg transition-shadow duration-200">
+    <Card 
+      className="h-full hover:shadow-xl transition-all duration-300 hover:scale-[1.02] transform cursor-pointer group border-2 hover:border-primary/20"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg font-semibold truncate">
+            <CardTitle className="text-lg font-semibold truncate group-hover:text-primary transition-colors duration-200">
               {repository.name}
             </CardTitle>
             <CardDescription className="mt-1 line-clamp-2">
               {repository.description || 'No description available'}
             </CardDescription>
+          </div>
+          <div className={`transition-all duration-300 ${isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}>
+            <Eye className="w-4 h-4 text-muted-foreground" />
           </div>
         </div>
       </CardHeader>
@@ -127,8 +131,9 @@ export function ProjectCard({
           )}
 
           {/* Updated Date */}
-          <div className="text-xs text-muted-foreground">
-            Updated {formatDate(repository.updated_at)}
+          <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+            <Calendar className="w-3 h-3" />
+            <span>Updated {formatDate(repository.updated_at)}</span>
           </div>
 
           {/* Action Buttons */}
@@ -136,7 +141,7 @@ export function ProjectCard({
             <Button
               variant="outline"
               size="sm"
-              className="flex-1"
+              className="flex-1 transition-all duration-200 hover:scale-105 hover:bg-primary hover:text-primary-foreground"
               onClick={() => window.open(repository.html_url, '_blank')}
             >
               <Github className="w-3 h-3 mr-1" />
@@ -147,7 +152,7 @@ export function ProjectCard({
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1"
+                className="flex-1 transition-all duration-200 hover:scale-105 hover:bg-green-500 hover:text-white hover:border-green-500"
                 onClick={() => window.open(repository.homepage, '_blank')}
               >
                 <ExternalLink className="w-3 h-3 mr-1" />
@@ -158,7 +163,7 @@ export function ProjectCard({
             {showAddButton && onAddToPortfolio && (
               <Button
                 size="sm"
-                className="flex-1"
+                className="flex-1 transition-all duration-200 hover:scale-105"
                 onClick={() => onAddToPortfolio(repository)}
               >
                 Add to Portfolio
@@ -171,39 +176,70 @@ export function ProjectCard({
   );
 }
 
-// Loading skeleton for ProjectCard
+// Enhanced loading skeleton for ProjectCard
 export function ProjectCardSkeleton() {
   return (
     <Card className="h-full">
       <CardHeader className="pb-3">
-        <div className="space-y-2">
-          <div className="h-5 bg-muted animate-pulse rounded" />
-          <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
+        <div className="flex items-start justify-between">
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+          <Skeleton className="h-4 w-4 rounded-full" />
         </div>
       </CardHeader>
 
       <CardContent className="pt-0">
         <div className="space-y-4">
+          {/* Language and Stats */}
           <div className="flex items-center space-x-4">
-            <div className="h-3 w-3 bg-muted animate-pulse rounded-full" />
-            <div className="h-3 bg-muted animate-pulse rounded w-16" />
-            <div className="h-3 bg-muted animate-pulse rounded w-8" />
+            <div className="flex items-center space-x-1">
+              <Skeleton className="h-3 w-3 rounded-full" />
+              <Skeleton className="h-3 w-16" />
+            </div>
+            <div className="flex items-center space-x-1">
+              <Skeleton className="h-3 w-3" />
+              <Skeleton className="h-3 w-8" />
+            </div>
+            <div className="flex items-center space-x-1">
+              <Skeleton className="h-3 w-3" />
+              <Skeleton className="h-3 w-8" />
+            </div>
           </div>
 
+          {/* Topics */}
           <div className="flex space-x-1">
-            <div className="h-5 bg-muted animate-pulse rounded w-12" />
-            <div className="h-5 bg-muted animate-pulse rounded w-16" />
-            <div className="h-5 bg-muted animate-pulse rounded w-10" />
+            <Skeleton className="h-5 w-12 rounded-full" />
+            <Skeleton className="h-5 w-16 rounded-full" />
+            <Skeleton className="h-5 w-10 rounded-full" />
           </div>
 
-          <div className="h-3 bg-muted animate-pulse rounded w-24" />
+          {/* Updated Date */}
+          <div className="flex items-center space-x-1">
+            <Skeleton className="h-3 w-3" />
+            <Skeleton className="h-3 w-24" />
+          </div>
 
+          {/* Action Buttons */}
           <div className="flex space-x-2 pt-2">
-            <div className="h-8 bg-muted animate-pulse rounded flex-1" />
-            <div className="h-8 bg-muted animate-pulse rounded flex-1" />
+            <Skeleton className="h-8 flex-1 rounded" />
+            <Skeleton className="h-8 flex-1 rounded" />
           </div>
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+// Grid skeleton for multiple project cards
+export function ProjectGridSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {Array.from({ length: count }).map((_, index) => (
+        <ProjectCardSkeleton key={index} />
+      ))}
+    </div>
   );
 }

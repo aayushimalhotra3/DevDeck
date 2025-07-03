@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { X, User, Code, Briefcase, BookOpen, MessageSquare, Mail, FileText } from 'lucide-react';
+import { X, User, Code, Briefcase, BookOpen, MessageSquare, Mail, FileText, HelpCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { FeatureTooltip, Tooltip } from './Tooltip';
 
 interface PortfolioBlock {
   id: string;
@@ -64,7 +65,12 @@ export function PropertyPanel({ block, onUpdateBlock, onClose }: PropertyPanelPr
   const renderBioProperties = () => (
     <div className="space-y-4">
       <div>
-        <Label htmlFor="name">Name</Label>
+        <div className="flex items-center gap-2 mb-2">
+          <Label htmlFor="name">Name</Label>
+          <Tooltip content="Your full name as it will appear on your portfolio">
+            <HelpCircle className="w-4 h-4 text-muted-foreground" />
+          </Tooltip>
+        </div>
         <Input
           id="name"
           value={localContent.name || ''}
@@ -73,7 +79,12 @@ export function PropertyPanel({ block, onUpdateBlock, onClose }: PropertyPanelPr
         />
       </div>
       <div>
-        <Label htmlFor="title">Title</Label>
+        <div className="flex items-center gap-2 mb-2">
+          <Label htmlFor="title">Title</Label>
+          <Tooltip content="Your professional title or role (e.g., 'Full Stack Developer')">
+            <HelpCircle className="w-4 h-4 text-muted-foreground" />
+          </Tooltip>
+        </div>
         <Input
           id="title"
           value={localContent.title || ''}
@@ -82,7 +93,12 @@ export function PropertyPanel({ block, onUpdateBlock, onClose }: PropertyPanelPr
         />
       </div>
       <div>
-        <Label htmlFor="description">Description</Label>
+        <div className="flex items-center gap-2 mb-2">
+          <Label htmlFor="description">Description</Label>
+          <Tooltip content="A brief introduction about yourself, your background, and what you do">
+            <HelpCircle className="w-4 h-4 text-muted-foreground" />
+          </Tooltip>
+        </div>
         <Textarea
           id="description"
           value={localContent.description || ''}
@@ -92,7 +108,12 @@ export function PropertyPanel({ block, onUpdateBlock, onClose }: PropertyPanelPr
         />
       </div>
       <div>
-        <Label htmlFor="email">Email</Label>
+        <div className="flex items-center gap-2 mb-2">
+          <Label htmlFor="email">Email</Label>
+          <Tooltip content="Your contact email address">
+            <HelpCircle className="w-4 h-4 text-muted-foreground" />
+          </Tooltip>
+        </div>
         <Input
           id="email"
           type="email"
@@ -102,7 +123,12 @@ export function PropertyPanel({ block, onUpdateBlock, onClose }: PropertyPanelPr
         />
       </div>
       <div>
-        <Label htmlFor="location">Location</Label>
+        <div className="flex items-center gap-2 mb-2">
+          <Label htmlFor="location">Location</Label>
+          <Tooltip content="Your current location or preferred work location">
+            <HelpCircle className="w-4 h-4 text-muted-foreground" />
+          </Tooltip>
+        </div>
         <Input
           id="location"
           value={localContent.location || ''}
@@ -136,10 +162,20 @@ export function PropertyPanel({ block, onUpdateBlock, onClose }: PropertyPanelPr
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <Label>Skills</Label>
-          <Button size="sm" onClick={addSkill}>
-            Add Skill
-          </Button>
+          <div className="flex items-center gap-2">
+            <Label>Skills</Label>
+            <Tooltip content="Add your technical and professional skills with proficiency levels">
+              <HelpCircle className="w-4 h-4 text-muted-foreground" />
+            </Tooltip>
+          </div>
+          <FeatureTooltip
+            title="Add New Skill"
+            description="Add a new skill to showcase your expertise"
+          >
+            <Button size="sm" onClick={addSkill}>
+              Add Skill
+            </Button>
+          </FeatureTooltip>
         </div>
         <div className="space-y-3">
           {skills.map((skill: any, index: number) => (

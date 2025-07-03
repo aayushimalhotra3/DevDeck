@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { X, GripVertical } from 'lucide-react';
+import { FeatureTooltip } from './Tooltip';
 
 interface PortfolioBlock {
   id: string;
@@ -441,27 +442,62 @@ export function DragEditor({
               No blocks added yet. Start building your portfolio!
             </p>
             <div className="space-x-2">
-              <Button onClick={() => addBlock('bio')} variant="outline">
-                📝 Add Bio
-              </Button>
-              <Button onClick={() => addBlock('projects')} variant="outline">
-                🚀 Add Projects
-              </Button>
-              <Button onClick={() => addBlock('skills')} variant="outline">
-                💻 Add Skills
-              </Button>
-              <Button onClick={() => addBlock('blog')} variant="outline">
-                📚 Add Blog
-              </Button>
-              <Button onClick={() => addBlock('testimonials')} variant="outline">
-                💬 Add Testimonials
-              </Button>
-              <Button onClick={() => addBlock('contact')} variant="outline">
-                📧 Add Contact
-              </Button>
-              <Button onClick={() => addBlock('resume')} variant="outline">
-                📄 Add Resume
-              </Button>
+              <FeatureTooltip
+                title="Bio Block"
+                description="Add your personal introduction and background"
+              >
+                <Button onClick={() => addBlock('bio')} variant="outline">
+                  📝 Add Bio
+                </Button>
+              </FeatureTooltip>
+              <FeatureTooltip
+                title="Projects Block"
+                description="Showcase your work and achievements"
+              >
+                <Button onClick={() => addBlock('projects')} variant="outline">
+                  🚀 Add Projects
+                </Button>
+              </FeatureTooltip>
+              <FeatureTooltip
+                title="Skills Block"
+                description="Display your technical and professional skills"
+              >
+                <Button onClick={() => addBlock('skills')} variant="outline">
+                  💻 Add Skills
+                </Button>
+              </FeatureTooltip>
+              <FeatureTooltip
+                title="Blog Block"
+                description="Link to your blog posts and articles"
+              >
+                <Button onClick={() => addBlock('blog')} variant="outline">
+                  📚 Add Blog
+                </Button>
+              </FeatureTooltip>
+              <FeatureTooltip
+                title="Testimonials Block"
+                description="Add client reviews and recommendations"
+              >
+                <Button onClick={() => addBlock('testimonials')} variant="outline">
+                  💬 Add Testimonials
+                </Button>
+              </FeatureTooltip>
+              <FeatureTooltip
+                title="Contact Block"
+                description="Provide your contact information"
+              >
+                <Button onClick={() => addBlock('contact')} variant="outline">
+                  📧 Add Contact
+                </Button>
+              </FeatureTooltip>
+              <FeatureTooltip
+                title="Resume Block"
+                description="Upload and share your resume"
+              >
+                <Button onClick={() => addBlock('resume')} variant="outline">
+                  📄 Add Resume
+                </Button>
+              </FeatureTooltip>
             </div>
           </div>
         ) : (
@@ -482,55 +518,90 @@ export function DragEditor({
             <div className="mt-6 pt-4 border-t border-gray-200">
               <p className="text-sm text-gray-600 mb-3">Add more blocks:</p>
               <div className="space-x-2">
-                <Button
-                  onClick={() => addBlock('bio')}
-                  variant="outline"
-                  size="sm"
+                <FeatureTooltip
+                  title="Bio Block"
+                  description="Add your personal introduction and background"
                 >
-                  📝 Bio
-                </Button>
-                <Button
-                  onClick={() => addBlock('projects')}
-                  variant="outline"
-                  size="sm"
+                  <Button
+                    onClick={() => addBlock('bio')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    📝 Bio
+                  </Button>
+                </FeatureTooltip>
+                <FeatureTooltip
+                  title="Projects Block"
+                  description="Showcase your work and achievements"
                 >
-                  🚀 Projects
-                </Button>
-                <Button
-                  onClick={() => addBlock('skills')}
-                  variant="outline"
-                  size="sm"
+                  <Button
+                    onClick={() => addBlock('projects')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    🚀 Projects
+                  </Button>
+                </FeatureTooltip>
+                <FeatureTooltip
+                  title="Skills Block"
+                  description="Display your technical and professional skills"
                 >
-                  💻 Skills
-                </Button>
-                <Button
-                  onClick={() => addBlock('blog')}
-                  variant="outline"
-                  size="sm"
+                  <Button
+                    onClick={() => addBlock('skills')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    💻 Skills
+                  </Button>
+                </FeatureTooltip>
+                <FeatureTooltip
+                  title="Blog Block"
+                  description="Link to your blog posts and articles"
                 >
-                  📚 Blog
-                </Button>
-                <Button
-                  onClick={() => addBlock('testimonials')}
-                  variant="outline"
-                  size="sm"
+                  <Button
+                    onClick={() => addBlock('blog')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    📚 Blog
+                  </Button>
+                </FeatureTooltip>
+                <FeatureTooltip
+                  title="Testimonials Block"
+                  description="Add client reviews and recommendations"
                 >
-                  💬 Testimonials
-                </Button>
-                <Button
-                  onClick={() => addBlock('contact')}
-                  variant="outline"
-                  size="sm"
+                  <Button
+                    onClick={() => addBlock('testimonials')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    💬 Testimonials
+                  </Button>
+                </FeatureTooltip>
+                <FeatureTooltip
+                  title="Contact Block"
+                  description="Provide your contact information"
                 >
-                  📧 Contact
-                </Button>
-                <Button
-                  onClick={() => addBlock('resume')}
-                  variant="outline"
-                  size="sm"
+                  <Button
+                    onClick={() => addBlock('contact')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    📧 Contact
+                  </Button>
+                </FeatureTooltip>
+                <FeatureTooltip
+                  title="Resume Block"
+                  description="Upload and share your resume"
                 >
-                  📄 Resume
-                </Button>
+                  <Button
+                    onClick={() => addBlock('resume')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    📄 Resume
+                  </Button>
+                </FeatureTooltip>
               </div>
             </div>
           </div>
