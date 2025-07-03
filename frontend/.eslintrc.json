@@ -4,7 +4,10 @@
   "rules": {
     "prefer-const": "error",
     "no-var": "error",
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "react/no-unescaped-entities": "off",
+    "react-hooks/exhaustive-deps": "warn",
+    "@next/next/no-img-element": "warn"
   },
   "env": {
     "browser": true,

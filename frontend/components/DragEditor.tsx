@@ -12,7 +12,14 @@ import { X, GripVertical } from 'lucide-react';
 
 interface PortfolioBlock {
   id: string;
-  type: 'bio' | 'projects' | 'skills' | 'blog' | 'testimonials' | 'contact' | 'resume';
+  type:
+    | 'bio'
+    | 'projects'
+    | 'skills'
+    | 'blog'
+    | 'testimonials'
+    | 'contact'
+    | 'resume';
   content: any;
   position: { x: number; y: number };
 }
@@ -359,7 +366,7 @@ function DraggableBlock({
       }}
       className={`mb-4 ${isDragging ? 'opacity-50' : ''}`}
     >
-      <Card 
+      <Card
         className={`cursor-pointer transition-all duration-200 ${
           isSelected ? 'ring-2 ring-blue-500 shadow-md' : 'hover:shadow-sm'
         }`}
@@ -379,7 +386,7 @@ function DraggableBlock({
           <Button
             variant="ghost"
             size="sm"
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               onDeleteBlock(block.id);
             }}
@@ -393,11 +400,11 @@ function DraggableBlock({
   );
 }
 
-export function DragEditor({ 
-  blocks, 
-  onBlocksUpdate, 
-  selectedBlockId, 
-  onBlockSelect 
+export function DragEditor({
+  blocks,
+  onBlocksUpdate,
+  selectedBlockId,
+  onBlockSelect,
 }: DragEditorProps) {
   const moveBlock = useCallback(
     (dragIndex: number, hoverIndex: number) => {
@@ -453,7 +460,10 @@ export function DragEditor({
               <Button onClick={() => addBlock('blog')} variant="outline">
                 📚 Add Blog
               </Button>
-              <Button onClick={() => addBlock('testimonials')} variant="outline">
+              <Button
+                onClick={() => addBlock('testimonials')}
+                variant="outline"
+              >
                 💬 Add Testimonials
               </Button>
               <Button onClick={() => addBlock('contact')} variant="outline">

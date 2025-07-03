@@ -54,27 +54,33 @@ export default function Settings() {
       await navigator.clipboard.writeText(portfolioUrl);
       setCopied(true);
       toast({
-        title: "URL copied!",
-        description: "Portfolio URL has been copied to clipboard.",
+        title: 'URL copied!',
+        description: 'Portfolio URL has been copied to clipboard.',
       });
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       toast({
-        title: "Failed to copy",
-        description: "Could not copy URL to clipboard.",
-        variant: "destructive",
+        title: 'Failed to copy',
+        description: 'Could not copy URL to clipboard.',
+        variant: 'destructive',
       });
     }
   };
 
   const handleSocialShare = (platform: string) => {
-    const text = "Check out my portfolio!";
+    const text = 'Check out my portfolio!';
     const url = portfolioUrl;
-    
+
     if (platform === 'twitter') {
-      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+      window.open(
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+        '_blank'
+      );
     } else if (platform === 'linkedin') {
-      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+      window.open(
+        `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+        '_blank'
+      );
     }
   };
 
@@ -316,20 +322,20 @@ export default function Settings() {
                   <div>
                     <h3 className="font-medium mb-2">Portfolio URL</h3>
                     <div className="flex items-center space-x-2">
-                      <Input
-                        value={portfolioUrl}
-                        readOnly
-                        className="flex-1"
-                      />
-                      <Button 
-                        size="sm" 
+                      <Input value={portfolioUrl} readOnly className="flex-1" />
+                      <Button
+                        size="sm"
                         variant="outline"
                         onClick={handleCopyUrl}
                       >
-                        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        {copied ? (
+                          <Check className="w-4 h-4" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
                       </Button>
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         variant="outline"
                         onClick={() => window.open(portfolioUrl, '_blank')}
                       >
@@ -341,16 +347,16 @@ export default function Settings() {
                   <div>
                     <h3 className="font-medium mb-2">Share Portfolio</h3>
                     <div className="flex flex-wrap gap-2">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleSocialShare('twitter')}
                       >
                         <Share2 className="h-4 w-4 mr-2" />
                         Share on Twitter
                       </Button>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleSocialShare('linkedin')}
                       >
@@ -402,10 +408,12 @@ export default function Settings() {
                     { name: 'Orange', value: 'orange', color: 'bg-orange-500' },
                     { name: 'Red', value: 'red', color: 'bg-red-500' },
                     { name: 'Pink', value: 'pink', color: 'bg-pink-500' },
-                  ].map((color) => (
+                  ].map(color => (
                     <button
                       key={color.value}
-                      onClick={() => setTheme({ ...theme, colorScheme: color.value })}
+                      onClick={() =>
+                        setTheme({ ...theme, colorScheme: color.value })
+                      }
                       className={`w-12 h-12 rounded-lg ${color.color} border-2 ${
                         theme.colorScheme === color.value
                           ? 'border-foreground'
@@ -421,14 +429,32 @@ export default function Settings() {
                 <Label>Font Family</Label>
                 <div className="grid grid-cols-1 gap-2">
                   {[
-                    { name: 'Inter', value: 'inter', preview: 'The quick brown fox jumps' },
-                    { name: 'Roboto', value: 'roboto', preview: 'The quick brown fox jumps' },
-                    { name: 'Open Sans', value: 'opensans', preview: 'The quick brown fox jumps' },
-                    { name: 'Poppins', value: 'poppins', preview: 'The quick brown fox jumps' },
-                  ].map((font) => (
+                    {
+                      name: 'Inter',
+                      value: 'inter',
+                      preview: 'The quick brown fox jumps',
+                    },
+                    {
+                      name: 'Roboto',
+                      value: 'roboto',
+                      preview: 'The quick brown fox jumps',
+                    },
+                    {
+                      name: 'Open Sans',
+                      value: 'opensans',
+                      preview: 'The quick brown fox jumps',
+                    },
+                    {
+                      name: 'Poppins',
+                      value: 'poppins',
+                      preview: 'The quick brown fox jumps',
+                    },
+                  ].map(font => (
                     <button
                       key={font.value}
-                      onClick={() => setTheme({ ...theme, fontFamily: font.value })}
+                      onClick={() =>
+                        setTheme({ ...theme, fontFamily: font.value })
+                      }
                       className={`p-3 text-left border rounded-lg hover:bg-accent ${
                         theme.fontFamily === font.value
                           ? 'border-primary bg-accent'
@@ -436,7 +462,9 @@ export default function Settings() {
                       }`}
                     >
                       <div className="font-medium">{font.name}</div>
-                      <div className="text-sm text-muted-foreground">{font.preview}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {font.preview}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -452,10 +480,12 @@ export default function Settings() {
                     { name: 'Large', value: 'large', class: 'rounded-lg' },
                     { name: 'Extra Large', value: 'xl', class: 'rounded-xl' },
                     { name: 'Full', value: 'full', class: 'rounded-full' },
-                  ].map((radius) => (
+                  ].map(radius => (
                     <button
                       key={radius.value}
-                      onClick={() => setTheme({ ...theme, borderRadius: radius.value })}
+                      onClick={() =>
+                        setTheme({ ...theme, borderRadius: radius.value })
+                      }
                       className={`p-3 text-center border hover:bg-accent ${
                         theme.borderRadius === radius.value
                           ? 'border-primary bg-accent'
@@ -468,7 +498,9 @@ export default function Settings() {
                 </div>
               </div>
 
-              <Button onClick={() => console.log('Save theme settings')}>Save Theme Settings</Button>
+              <Button onClick={() => console.log('Save theme settings')}>
+                Save Theme Settings
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>

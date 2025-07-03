@@ -40,7 +40,7 @@ export function QRCodeComponent({
           color,
           errorCorrectionLevel,
         },
-        (error) => {
+        error => {
           if (error) {
             console.error('QR Code generation error:', error);
           }

@@ -2,7 +2,13 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +31,7 @@ import {
   PlayCircle,
   FileText,
   Lightbulb,
-  HelpCircle
+  HelpCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -45,7 +51,7 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '5 min',
           difficulty: 'Beginner',
-          link: '/docs/quick-start'
+          link: '/docs/quick-start',
         },
         {
           title: 'Creating Your First Portfolio',
@@ -53,7 +59,7 @@ const DocsPage: React.FC = () => {
           type: 'tutorial',
           readTime: '10 min',
           difficulty: 'Beginner',
-          link: '/docs/first-portfolio'
+          link: '/docs/first-portfolio',
         },
         {
           title: 'Understanding the Editor',
@@ -61,9 +67,9 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '8 min',
           difficulty: 'Beginner',
-          link: '/docs/editor-basics'
-        }
-      ]
+          link: '/docs/editor-basics',
+        },
+      ],
     },
     {
       title: 'GitHub Integration',
@@ -77,7 +83,7 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '3 min',
           difficulty: 'Beginner',
-          link: '/docs/github-connect'
+          link: '/docs/github-connect',
         },
         {
           title: 'Importing Projects',
@@ -85,7 +91,7 @@ const DocsPage: React.FC = () => {
           type: 'tutorial',
           readTime: '7 min',
           difficulty: 'Intermediate',
-          link: '/docs/import-projects'
+          link: '/docs/import-projects',
         },
         {
           title: 'Managing Repository Visibility',
@@ -93,9 +99,9 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '5 min',
           difficulty: 'Intermediate',
-          link: '/docs/repo-visibility'
-        }
-      ]
+          link: '/docs/repo-visibility',
+        },
+      ],
     },
     {
       title: 'Customization',
@@ -109,7 +115,7 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '6 min',
           difficulty: 'Beginner',
-          link: '/docs/themes'
+          link: '/docs/themes',
         },
         {
           title: 'Adding Custom Blocks',
@@ -117,7 +123,7 @@ const DocsPage: React.FC = () => {
           type: 'tutorial',
           readTime: '12 min',
           difficulty: 'Intermediate',
-          link: '/docs/custom-blocks'
+          link: '/docs/custom-blocks',
         },
         {
           title: 'Advanced Styling Options',
@@ -125,9 +131,9 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '15 min',
           difficulty: 'Advanced',
-          link: '/docs/advanced-styling'
-        }
-      ]
+          link: '/docs/advanced-styling',
+        },
+      ],
     },
     {
       title: 'Publishing & Sharing',
@@ -141,7 +147,7 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '4 min',
           difficulty: 'Beginner',
-          link: '/docs/publishing'
+          link: '/docs/publishing',
         },
         {
           title: 'Custom Domain Setup',
@@ -149,7 +155,7 @@ const DocsPage: React.FC = () => {
           type: 'tutorial',
           readTime: '10 min',
           difficulty: 'Intermediate',
-          link: '/docs/custom-domain'
+          link: '/docs/custom-domain',
         },
         {
           title: 'SEO Optimization',
@@ -157,9 +163,9 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '8 min',
           difficulty: 'Intermediate',
-          link: '/docs/seo'
-        }
-      ]
+          link: '/docs/seo',
+        },
+      ],
     },
     {
       title: 'Analytics & Settings',
@@ -173,7 +179,7 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '6 min',
           difficulty: 'Beginner',
-          link: '/docs/analytics'
+          link: '/docs/analytics',
         },
         {
           title: 'Account Settings',
@@ -181,7 +187,7 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '4 min',
           difficulty: 'Beginner',
-          link: '/docs/account-settings'
+          link: '/docs/account-settings',
         },
         {
           title: 'Privacy and Security',
@@ -189,9 +195,9 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '5 min',
           difficulty: 'Beginner',
-          link: '/docs/privacy'
-        }
-      ]
+          link: '/docs/privacy',
+        },
+      ],
     },
     {
       title: 'Team Features',
@@ -205,7 +211,7 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '8 min',
           difficulty: 'Intermediate',
-          link: '/docs/team-collaboration'
+          link: '/docs/team-collaboration',
         },
         {
           title: 'Managing Team Members',
@@ -213,7 +219,7 @@ const DocsPage: React.FC = () => {
           type: 'tutorial',
           readTime: '6 min',
           difficulty: 'Intermediate',
-          link: '/docs/team-management'
+          link: '/docs/team-management',
         },
         {
           title: 'White-label Solutions',
@@ -221,10 +227,10 @@ const DocsPage: React.FC = () => {
           type: 'guide',
           readTime: '10 min',
           difficulty: 'Advanced',
-          link: '/docs/white-label'
-        }
-      ]
-    }
+          link: '/docs/white-label',
+        },
+      ],
+    },
   ];
 
   const quickLinks = [
@@ -233,29 +239,29 @@ const DocsPage: React.FC = () => {
       description: 'Watch step-by-step video guides',
       icon: <PlayCircle className="w-8 h-8" />,
       link: '/docs/videos',
-      color: 'bg-red-500'
+      color: 'bg-red-500',
     },
     {
       title: 'API Documentation',
       description: 'Integrate with DevDeck programmatically',
       icon: <Code className="w-8 h-8" />,
       link: '/docs/api',
-      color: 'bg-blue-500'
+      color: 'bg-blue-500',
     },
     {
       title: 'Community Forum',
       description: 'Get help from the community',
       icon: <Users className="w-8 h-8" />,
       link: '/community',
-      color: 'bg-green-500'
+      color: 'bg-green-500',
     },
     {
       title: 'Contact Support',
       description: 'Get direct help from our team',
       icon: <HelpCircle className="w-8 h-8" />,
       link: '/support',
-      color: 'bg-purple-500'
-    }
+      color: 'bg-purple-500',
+    },
   ];
 
   const popularArticles = [
@@ -264,29 +270,29 @@ const DocsPage: React.FC = () => {
       readTime: '12 min',
       views: '15.2k',
       rating: 4.9,
-      link: '/docs/stunning-portfolio'
+      link: '/docs/stunning-portfolio',
     },
     {
       title: 'Best Practices for Showcasing Projects',
       readTime: '8 min',
       views: '12.8k',
       rating: 4.8,
-      link: '/docs/project-showcase'
+      link: '/docs/project-showcase',
     },
     {
       title: 'GitHub Integration Complete Guide',
       readTime: '15 min',
       views: '11.5k',
       rating: 4.9,
-      link: '/docs/github-complete'
+      link: '/docs/github-complete',
     },
     {
       title: 'SEO Tips for Developer Portfolios',
       readTime: '10 min',
       views: '9.3k',
       rating: 4.7,
-      link: '/docs/seo-tips'
-    }
+      link: '/docs/seo-tips',
+    },
   ];
 
   const containerVariants = {
@@ -294,9 +300,9 @@ const DocsPage: React.FC = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
@@ -305,9 +311,9 @@ const DocsPage: React.FC = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5
-      }
-    }
+        duration: 0.5,
+      },
+    },
   };
 
   const getTypeIcon = (type: string) => {
@@ -337,7 +343,7 @@ const DocsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       {/* Hero Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <motion.div
@@ -352,22 +358,22 @@ const DocsPage: React.FC = () => {
               Documentation & Tutorials
             </Badge>
           </motion.div>
-          
+
           <motion.h1
             className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent"
             variants={itemVariants}
           >
             DevDeck Documentation
           </motion.h1>
-          
+
           <motion.p
             className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto"
             variants={itemVariants}
           >
-            Everything you need to know about creating amazing developer portfolios.
-            From getting started to advanced customization.
+            Everything you need to know about creating amazing developer
+            portfolios. From getting started to advanced customization.
           </motion.p>
-          
+
           <motion.div
             className="max-w-md mx-auto relative"
             variants={itemVariants}
@@ -376,7 +382,7 @@ const DocsPage: React.FC = () => {
             <Input
               placeholder="Search documentation..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className="pl-10 pr-4 py-3 text-lg"
             />
           </motion.div>
@@ -398,11 +404,17 @@ const DocsPage: React.FC = () => {
                 <Link href={link.link}>
                   <Card className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer group">
                     <CardContent className="p-6 text-center">
-                      <div className={`w-16 h-16 ${link.color} rounded-full flex items-center justify-center text-white mx-auto mb-4 group-hover:scale-110 transition-transform`}>
+                      <div
+                        className={`w-16 h-16 ${link.color} rounded-full flex items-center justify-center text-white mx-auto mb-4 group-hover:scale-110 transition-transform`}
+                      >
                         {link.icon}
                       </div>
-                      <h3 className="text-lg font-semibold mb-2 text-foreground">{link.title}</h3>
-                      <p className="text-muted-foreground text-sm">{link.description}</p>
+                      <h3 className="text-lg font-semibold mb-2 text-foreground">
+                        {link.title}
+                      </h3>
+                      <p className="text-muted-foreground text-sm">
+                        {link.description}
+                      </p>
                       <ArrowRight className="w-4 h-4 mx-auto mt-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     </CardContent>
                   </Card>
@@ -436,7 +448,7 @@ const DocsPage: React.FC = () => {
               Most read guides and tutorials from our community.
             </motion.p>
           </motion.div>
-          
+
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
             initial="hidden"
@@ -450,7 +462,9 @@ const DocsPage: React.FC = () => {
                   <Card className="h-full hover:shadow-lg transition-shadow duration-300 cursor-pointer">
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-lg font-semibold text-foreground flex-1">{article.title}</h3>
+                        <h3 className="text-lg font-semibold text-foreground flex-1">
+                          {article.title}
+                        </h3>
                         <ExternalLink className="w-4 h-4 text-muted-foreground ml-2 flex-shrink-0" />
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -493,10 +507,11 @@ const DocsPage: React.FC = () => {
               className="text-xl text-muted-foreground max-w-2xl mx-auto"
               variants={itemVariants}
             >
-              Find exactly what you're looking for with our organized documentation.
+              Find exactly what you're looking for with our organized
+              documentation.
             </motion.p>
           </motion.div>
-          
+
           <motion.div
             className="space-y-12"
             initial="hidden"
@@ -508,16 +523,22 @@ const DocsPage: React.FC = () => {
               <motion.div key={categoryIndex} variants={itemVariants}>
                 <div className="mb-8">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className={`w-12 h-12 ${category.color} rounded-lg flex items-center justify-center text-white`}>
+                    <div
+                      className={`w-12 h-12 ${category.color} rounded-lg flex items-center justify-center text-white`}
+                    >
                       {category.icon}
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-foreground">{category.title}</h3>
-                      <p className="text-muted-foreground">{category.description}</p>
+                      <h3 className="text-2xl font-bold text-foreground">
+                        {category.title}
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {category.description}
+                      </p>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {category.articles.map((article, articleIndex) => (
                     <Link key={articleIndex} href={article.link}>
@@ -526,13 +547,19 @@ const DocsPage: React.FC = () => {
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
                               {getTypeIcon(article.type)}
-                              <span className="text-sm text-muted-foreground capitalize">{article.type}</span>
+                              <span className="text-sm text-muted-foreground capitalize">
+                                {article.type}
+                              </span>
                             </div>
-                            <Badge className={getDifficultyColor(article.difficulty)}>
+                            <Badge
+                              className={getDifficultyColor(article.difficulty)}
+                            >
                               {article.difficulty}
                             </Badge>
                           </div>
-                          <CardTitle className="text-lg">{article.title}</CardTitle>
+                          <CardTitle className="text-lg">
+                            {article.title}
+                          </CardTitle>
                         </CardHeader>
                         <CardContent className="pt-0">
                           <CardDescription className="mb-4">
@@ -575,17 +602,29 @@ const DocsPage: React.FC = () => {
             className="text-xl mb-8 opacity-90 max-w-2xl mx-auto"
             variants={itemVariants}
           >
-            Can't find what you're looking for? Our support team is here to help you succeed.
+            Can't find what you're looking for? Our support team is here to help
+            you succeed.
           </motion.p>
-          <motion.div className="flex flex-col sm:flex-row gap-4 justify-center" variants={itemVariants}>
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 justify-center"
+            variants={itemVariants}
+          >
             <Link href="/support">
-              <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="bg-white text-blue-600 hover:bg-gray-100"
+              >
                 <HelpCircle className="w-4 h-4 mr-2" />
                 Contact Support
               </Button>
             </Link>
             <Link href="/community">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-blue-600"
+              >
                 <Users className="w-4 h-4 mr-2" />
                 Join Community
               </Button>

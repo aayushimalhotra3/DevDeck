@@ -28,9 +28,10 @@ interface TestimonialsBlockProps {
 const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
   testimonials = [],
   isEditing = false,
-  onUpdate
+  onUpdate,
 }) => {
-  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
+  const [editingTestimonial, setEditingTestimonial] =
+    useState<Testimonial | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
   const handleAddTestimonial = () => {
@@ -40,7 +41,7 @@ const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
       role: '',
       company: '',
       content: '',
-      rating: 5
+      rating: 5,
     };
     setEditingTestimonial(newTestimonial);
     setShowAddForm(true);
@@ -50,7 +51,7 @@ const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
     if (!testimonial.name || !testimonial.content) return;
 
     const updatedTestimonials = testimonials.find(t => t.id === testimonial.id)
-      ? testimonials.map(t => t.id === testimonial.id ? testimonial : t)
+      ? testimonials.map(t => (t.id === testimonial.id ? testimonial : t))
       : [...testimonials, testimonial];
 
     onUpdate?.(updatedTestimonials);
@@ -72,7 +73,11 @@ const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
     ));
   };
 
-  const TestimonialForm = ({ testimonial, onSave, onCancel }: {
+  const TestimonialForm = ({
+    testimonial,
+    onSave,
+    onCancel,
+  }: {
     testimonial: Testimonial;
     onSave: (testimonial: Testimonial) => void;
     onCancel: () => void;
@@ -91,23 +96,27 @@ const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
             <Input
               placeholder="Name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
             />
             <Input
               placeholder="Role"
               value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              onChange={e => setFormData({ ...formData, role: e.target.value })}
             />
           </div>
           <Input
             placeholder="Company"
             value={formData.company}
-            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+            onChange={e =>
+              setFormData({ ...formData, company: e.target.value })
+            }
           />
           <Textarea
             placeholder="Testimonial content..."
             value={formData.content}
-            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+            onChange={e =>
+              setFormData({ ...formData, content: e.target.value })
+            }
             rows={4}
           />
           <div className="flex items-center gap-2">
@@ -117,7 +126,9 @@ const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
                 <Star
                   key={i}
                   className={`w-5 h-5 cursor-pointer transition-colors ${
-                    i < formData.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 hover:text-yellow-400'
+                    i < formData.rating
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-gray-300 hover:text-yellow-400'
                   }`}
                   onClick={() => setFormData({ ...formData, rating: i + 1 })}
                 />
@@ -125,7 +136,10 @@ const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
             </div>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => onSave(formData)} disabled={!formData.name || !formData.content}>
+            <Button
+              onClick={() => onSave(formData)}
+              disabled={!formData.name || !formData.content}
+            >
               Save
             </Button>
             <Button variant="outline" onClick={onCancel}>
@@ -173,13 +187,15 @@ const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
               <Quote className="w-12 h-12 mx-auto mb-4 text-gray-300" />
               <p>No testimonials yet.</p>
               {isEditing && (
-                <p className="text-sm mt-2">Click "Add Testimonial" to get started.</p>
+                <p className="text-sm mt-2">
+                  Click "Add Testimonial" to get started.
+                </p>
               )}
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2">
               <AnimatePresence>
-                {testimonials.map((testimonial) => (
+                {testimonials.map(testimonial => (
                   <motion.div
                     key={testimonial.id}
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -205,22 +221,24 @@ const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({
                               <Button
                                 size="sm"
                                 variant="destructive"
-                                onClick={() => handleDeleteTestimonial(testimonial.id)}
+                                onClick={() =>
+                                  handleDeleteTestimonial(testimonial.id)
+                                }
                               >
                                 <X className="w-4 h-4" />
                               </Button>
                             </div>
                           </div>
                         )}
-                        
+
                         <div className="flex items-center gap-1 mb-3">
                           {renderStars(testimonial.rating)}
                         </div>
-                        
+
                         <blockquote className="text-gray-700 mb-4 italic">
                           "{testimonial.content}"
                         </blockquote>
-                        
+
                         <div className="flex items-center gap-3">
                           {testimonial.avatar && (
                             <img

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Upload, FileText, Download, X, Eye, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface ResumeFile {
   id: string;
@@ -30,14 +30,18 @@ const ResumeUploadBlock: React.FC<ResumeUploadBlockProps> = ({
   resumes = [],
   isEditing = false,
   onUpdate,
-  maxFileSize = 5
+  maxFileSize = 5,
 }) => {
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  const allowedTypes = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  ];
   const allowedExtensions = ['.pdf', '.doc', '.docx'];
 
   const formatFileSize = (bytes: number) => {
@@ -70,12 +74,12 @@ const ResumeUploadBlock: React.FC<ResumeUploadBlockProps> = ({
 
     const file = files[0];
     const validationError = validateFile(file);
-    
+
     if (validationError) {
       toast({
         title: 'Upload Error',
         description: validationError,
-        variant: 'destructive'
+        variant: 'destructive',
       });
       return;
     }
@@ -97,7 +101,7 @@ const ResumeUploadBlock: React.FC<ResumeUploadBlockProps> = ({
         size: file.size,
         uploadDate: new Date().toISOString(),
         type: getFileType(file.name),
-        isDefault: resumes.length === 0
+        isDefault: resumes.length === 0,
       };
 
       const updatedResumes = [...resumes, newResume];
@@ -105,13 +109,13 @@ const ResumeUploadBlock: React.FC<ResumeUploadBlockProps> = ({
 
       toast({
         title: 'Upload Successful',
-        description: 'Your resume has been uploaded successfully.'
+        description: 'Your resume has been uploaded successfully.',
       });
     } catch (error) {
       toast({
         title: 'Upload Failed',
         description: 'Failed to upload resume. Please try again.',
-        variant: 'destructive'
+        variant: 'destructive',
       });
     } finally {
       setUploading(false);
@@ -130,7 +134,7 @@ const ResumeUploadBlock: React.FC<ResumeUploadBlockProps> = ({
   const handleSetDefault = (id: string) => {
     const updatedResumes = resumes.map(r => ({
       ...r,
-      isDefault: r.id === id
+      isDefault: r.id === id,
     }));
     onUpdate?.(updatedResumes);
   };
@@ -193,10 +197,10 @@ const ResumeUploadBlock: React.FC<ResumeUploadBlockProps> = ({
                 ref={fileInputRef}
                 type="file"
                 accept={allowedExtensions.join(',')}
-                onChange={(e) => handleFileUpload(e.target.files)}
+                onChange={e => handleFileUpload(e.target.files)}
                 className="hidden"
               />
-              
+
               {uploading ? (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -232,13 +236,15 @@ const ResumeUploadBlock: React.FC<ResumeUploadBlockProps> = ({
               <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
               <p>No resume uploaded yet.</p>
               {isEditing && (
-                <p className="text-sm mt-2">Upload your resume to showcase your experience.</p>
+                <p className="text-sm mt-2">
+                  Upload your resume to showcase your experience.
+                </p>
               )}
             </div>
           ) : (
             <div className="space-y-4">
               <AnimatePresence>
-                {resumes.map((resume) => (
+                {resumes.map(resume => (
                   <motion.div
                     key={resume.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -252,7 +258,7 @@ const ResumeUploadBlock: React.FC<ResumeUploadBlockProps> = ({
                           <div className="flex-shrink-0">
                             {getFileIcon(resume.type)}
                           </div>
-                          
+
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="font-medium text-gray-900 truncate">
@@ -267,11 +273,14 @@ const ResumeUploadBlock: React.FC<ResumeUploadBlockProps> = ({
                             <div className="flex items-center gap-4 text-sm text-gray-500">
                               <span>{formatFileSize(resume.size)}</span>
                               <span>
-                                Uploaded {new Date(resume.uploadDate).toLocaleDateString()}
+                                Uploaded{' '}
+                                {new Date(
+                                  resume.uploadDate
+                                ).toLocaleDateString()}
                               </span>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center gap-2">
                             <Button
                               size="sm"
@@ -294,7 +303,7 @@ const ResumeUploadBlock: React.FC<ResumeUploadBlockProps> = ({
                               <Download className="w-4 h-4 mr-1" />
                               Download
                             </Button>
-                            
+
                             {isEditing && (
                               <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 {!resume.isDefault && (

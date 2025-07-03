@@ -7,16 +7,16 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/components/ui/use-toast';
-import { 
-  Github, 
-  Search, 
-  Star, 
-  GitFork, 
-  Calendar, 
-  Code, 
+import {
+  Github,
+  Search,
+  Star,
+  GitFork,
+  Calendar,
+  Code,
   Download,
   Loader2,
-  CheckCircle
+  CheckCircle,
 } from 'lucide-react';
 
 interface GitHubRepo {
@@ -78,14 +78,17 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
     setLoading(true);
     try {
       // Use the backend API endpoint instead of direct GitHub API
-      const response = await fetch('/api/github/repos?per_page=100&sort=updated', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Include cookies for authentication
-      });
-      
+      const response = await fetch(
+        '/api/github/repos?per_page=100&sort=updated',
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Include cookies for authentication
+        }
+      );
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to fetch repositories');
@@ -94,9 +97,9 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
       const data = await response.json();
       if (data.success) {
         setRepos(data.repos.filter((repo: GitHubRepo) => !repo.private)); // Only show public repos
-        
+
         toast({
-          title: "Success",
+          title: 'Success',
           description: `Found ${data.repos.length} repositories`,
         });
       } else {
@@ -105,9 +108,12 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
     } catch (error) {
       console.error('Error fetching repositories:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to fetch repositories",
-        variant: "destructive",
+        title: 'Error',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch repositories',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -135,9 +141,9 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
   const handleImport = async () => {
     if (selectedRepos.size === 0) {
       toast({
-        title: "Error",
-        description: "Please select at least one repository",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Please select at least one repository',
+        variant: 'destructive',
       });
       return;
     }
@@ -146,46 +152,51 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
     try {
       const selectedRepoData = repos.filter(repo => selectedRepos.has(repo.id));
       await onImport(selectedRepoData);
-      
+
       toast({
-        title: "Success",
+        title: 'Success',
         description: `Imported ${selectedRepos.size} repositories`,
       });
-      
+
       onClose();
     } catch (error) {
       console.error('Error importing repositories:', error);
       toast({
-        title: "Error",
-        description: "Failed to import repositories",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to import repositories',
+        variant: 'destructive',
       });
     } finally {
       setImporting(false);
     }
   };
 
-  const filteredRepos = repos.filter(repo => 
-    repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    repo.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    repo.language?.toLowerCase().includes(searchTerm.toLowerCase())
-  ).sort((a, b) => {
-    switch (sortBy) {
-      case 'name':
-        return a.name.localeCompare(b.name);
-      case 'stars':
-        return b.stargazers_count - a.stargazers_count;
-      case 'updated':
-      default:
-        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-    }
-  });
+  const filteredRepos = repos
+    .filter(
+      repo =>
+        repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        repo.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        repo.language?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'stars':
+          return b.stargazers_count - a.stargazers_count;
+        case 'updated':
+        default:
+          return (
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+          );
+      }
+    });
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -198,10 +209,12 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
               <Github className="w-6 h-6" />
               <CardTitle>Import from GitHub</CardTitle>
             </div>
-            <Button variant="ghost" onClick={onClose}>×</Button>
+            <Button variant="ghost" onClick={onClose}>
+              ×
+            </Button>
           </div>
         </CardHeader>
-        
+
         <CardContent className="p-6">
           {/* Loading State or Refresh Button */}
           {loading && repos.length === 0 ? (
@@ -217,13 +230,17 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
                   Your GitHub repositories ({repos.length} found)
                 </span>
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={fetchRepositories} 
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchRepositories}
                 disabled={loading}
               >
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Search className="w-4 h-4" />
+                )}
                 Refresh
               </Button>
             </div>
@@ -234,28 +251,28 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
               {/* Controls */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSelectAll}
-                  >
-                    {selectedRepos.size === filteredRepos.length ? 'Deselect All' : 'Select All'}
+                  <Button variant="outline" size="sm" onClick={handleSelectAll}>
+                    {selectedRepos.size === filteredRepos.length
+                      ? 'Deselect All'
+                      : 'Select All'}
                   </Button>
                   <span className="text-sm text-muted-foreground">
                     {selectedRepos.size} of {filteredRepos.length} selected
                   </span>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Input
                     placeholder="Search repositories..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={e => setSearchTerm(e.target.value)}
                     className="w-64"
                   />
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'name' | 'stars' | 'updated')}
+                    onChange={e =>
+                      setSortBy(e.target.value as 'name' | 'stars' | 'updated')
+                    }
                     className="px-3 py-2 border rounded-md"
                   >
                     <option value="updated">Last Updated</option>
@@ -267,11 +284,13 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
 
               {/* Repository List */}
               <div className="max-h-96 overflow-y-auto space-y-3">
-                {filteredRepos.map((repo) => (
+                {filteredRepos.map(repo => (
                   <Card
                     key={repo.id}
                     className={`cursor-pointer transition-all hover:shadow-md ${
-                      selectedRepos.has(repo.id) ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                      selectedRepos.has(repo.id)
+                        ? 'ring-2 ring-blue-500 bg-blue-50'
+                        : ''
                     }`}
                     onClick={() => handleRepoToggle(repo.id)}
                   >
@@ -282,10 +301,12 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
                           onChange={() => handleRepoToggle(repo.id)}
                           className="mt-1"
                         />
-                        
+
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2 mb-2">
-                            <h3 className="font-semibold text-lg truncate">{repo.name}</h3>
+                            <h3 className="font-semibold text-lg truncate">
+                              {repo.name}
+                            </h3>
                             <div className="flex items-center space-x-2">
                               <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                                 <Star className="w-3 h-3" />
@@ -297,30 +318,36 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
                               </div>
                             </div>
                           </div>
-                          
+
                           {repo.description && (
                             <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
                               {repo.description}
                             </p>
                           )}
-                          
+
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-2">
                               {repo.language && (
-                                <Badge 
-                                  variant="secondary" 
+                                <Badge
+                                  variant="secondary"
                                   className="text-xs"
-                                  style={{ 
-                                    backgroundColor: languageColors[repo.language] + '20',
-                                    color: languageColors[repo.language] || '#666'
+                                  style={{
+                                    backgroundColor:
+                                      languageColors[repo.language] + '20',
+                                    color:
+                                      languageColors[repo.language] || '#666',
                                   }}
                                 >
                                   <Code className="w-3 h-3 mr-1" />
                                   {repo.language}
                                 </Badge>
                               )}
-                              {repo.topics.slice(0, 3).map((topic) => (
-                                <Badge key={topic} variant="outline" className="text-xs">
+                              {repo.topics.slice(0, 3).map(topic => (
+                                <Badge
+                                  key={topic}
+                                  variant="outline"
+                                  className="text-xs"
+                                >
                                   {topic}
                                 </Badge>
                               ))}
@@ -330,7 +357,7 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
                                 </Badge>
                               )}
                             </div>
-                            
+
                             <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                               <Calendar className="w-3 h-3" />
                               <span>{formatDate(repo.updated_at)}</span>
@@ -348,8 +375,8 @@ export function GitHubImport({ onImport, onClose }: GitHubImportProps) {
                 <Button variant="outline" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button 
-                  onClick={handleImport} 
+                <Button
+                  onClick={handleImport}
                   disabled={selectedRepos.size === 0 || importing}
                 >
                   {importing ? (

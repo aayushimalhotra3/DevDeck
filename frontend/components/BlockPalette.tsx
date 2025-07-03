@@ -3,9 +3,27 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { User, Code, Briefcase, BookOpen, Plus, Github, Download, MessageSquare, Mail, FileText } from 'lucide-react';
+import {
+  User,
+  Code,
+  Briefcase,
+  BookOpen,
+  Plus,
+  Github,
+  Download,
+  MessageSquare,
+  Mail,
+  FileText,
+} from 'lucide-react';
 
-type BlockType = 'bio' | 'skills' | 'projects' | 'blog' | 'testimonials' | 'contact' | 'resume';
+type BlockType =
+  | 'bio'
+  | 'skills'
+  | 'projects'
+  | 'blog'
+  | 'testimonials'
+  | 'contact'
+  | 'resume';
 
 interface BlockPaletteProps {
   onAddBlock: (type: BlockType) => void;
@@ -64,7 +82,10 @@ const blockTypes = [
   },
 ];
 
-export function BlockPalette({ onAddBlock, onImportFromGitHub }: BlockPaletteProps) {
+export function BlockPalette({
+  onAddBlock,
+  onImportFromGitHub,
+}: BlockPaletteProps) {
   return (
     <div className="space-y-4">
       <div>
@@ -75,7 +96,7 @@ export function BlockPalette({ onAddBlock, onImportFromGitHub }: BlockPalettePro
       </div>
 
       <div className="space-y-3">
-        {blockTypes.map((blockType) => {
+        {blockTypes.map(blockType => {
           const Icon = blockType.icon;
           return (
             <Card

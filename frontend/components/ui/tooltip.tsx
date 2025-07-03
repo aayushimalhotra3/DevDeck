@@ -21,7 +21,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   delay = 500,
   disabled = false,
   className = '',
-  maxWidth = '200px'
+  maxWidth = '200px',
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -62,7 +62,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   const showTooltip = () => {
     if (disabled) return;
-    
+
     timeoutRef.current = setTimeout(() => {
       calculatePosition();
       setIsVisible(true);
@@ -86,14 +86,15 @@ export const Tooltip: React.FC<TooltipProps> = ({
   }, []);
 
   const getTooltipClasses = () => {
-    const baseClasses = 'absolute z-50 px-2 py-1 text-sm text-white bg-gray-900 rounded shadow-lg pointer-events-none';
+    const baseClasses =
+      'absolute z-50 px-2 py-1 text-sm text-white bg-gray-900 rounded shadow-lg pointer-events-none';
     const positionClasses = {
       top: 'transform -translate-x-1/2 -translate-y-full',
       bottom: 'transform -translate-x-1/2',
       left: 'transform -translate-x-full -translate-y-1/2',
-      right: 'transform -translate-y-1/2'
+      right: 'transform -translate-y-1/2',
     };
-    
+
     return `${baseClasses} ${positionClasses[position]} ${className}`;
   };
 
@@ -103,9 +104,9 @@ export const Tooltip: React.FC<TooltipProps> = ({
       top: 'top-full left-1/2 transform -translate-x-1/2 -translate-y-1/2',
       bottom: 'bottom-full left-1/2 transform -translate-x-1/2 translate-y-1/2',
       left: 'left-full top-1/2 transform -translate-x-1/2 -translate-y-1/2',
-      right: 'right-full top-1/2 transform translate-x-1/2 -translate-y-1/2'
+      right: 'right-full top-1/2 transform translate-x-1/2 -translate-y-1/2',
     };
-    
+
     return `${baseClasses} ${arrowPositions[position]}`;
   };
 
@@ -121,29 +122,30 @@ export const Tooltip: React.FC<TooltipProps> = ({
       >
         {children}
       </div>
-      
-      {typeof document !== 'undefined' && createPortal(
-        <AnimatePresence>
-          {isVisible && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.15 }}
-              className={getTooltipClasses()}
-              style={{
-                left: tooltipPosition.x,
-                top: tooltipPosition.y,
-                maxWidth
-              }}
-            >
-              {content}
-              <div className={getArrowClasses()} />
-            </motion.div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+
+      {typeof document !== 'undefined' &&
+        createPortal(
+          <AnimatePresence>
+            {isVisible && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.15 }}
+                className={getTooltipClasses()}
+                style={{
+                  left: tooltipPosition.x,
+                  top: tooltipPosition.y,
+                  maxWidth,
+                }}
+              >
+                {content}
+                <div className={getArrowClasses()} />
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
     </>
   );
 };
@@ -154,11 +156,12 @@ interface HelpTextProps {
   className?: string;
 }
 
-export const HelpText: React.FC<HelpTextProps> = ({ children, className = '' }) => {
+export const HelpText: React.FC<HelpTextProps> = ({
+  children,
+  className = '',
+}) => {
   return (
-    <p className={`text-sm text-gray-600 mt-1 ${className}`}>
-      {children}
-    </p>
+    <p className={`text-sm text-gray-600 mt-1 ${className}`}>{children}</p>
   );
 };
 
@@ -172,11 +175,13 @@ interface InfoTooltipProps {
 export const InfoTooltip: React.FC<InfoTooltipProps> = ({
   content,
   position = 'top',
-  className = ''
+  className = '',
 }) => {
   return (
     <Tooltip content={content} position={position}>
-      <div className={`inline-flex items-center justify-center w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help ${className}`}>
+      <div
+        className={`inline-flex items-center justify-center w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help ${className}`}
+      >
         <svg
           className="w-4 h-4"
           fill="currentColor"
@@ -208,7 +213,7 @@ export const FieldWithHelp: React.FC<FieldWithHelpProps> = ({
   helpText,
   required = false,
   children,
-  className = ''
+  className = '',
 }) => {
   return (
     <div className={`space-y-2 ${className}`}>
@@ -217,14 +222,10 @@ export const FieldWithHelp: React.FC<FieldWithHelpProps> = ({
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
-        {helpText && (
-          <InfoTooltip content={helpText} />
-        )}
+        {helpText && <InfoTooltip content={helpText} />}
       </div>
       {children}
-      {helpText && (
-        <HelpText>{helpText}</HelpText>
-      )}
+      {helpText && <HelpText>{helpText}</HelpText>}
     </div>
   );
 };
@@ -239,10 +240,12 @@ interface QuickHelpProps {
 export const QuickHelp: React.FC<QuickHelpProps> = ({
   title,
   items,
-  className = ''
+  className = '',
 }) => {
   return (
-    <div className={`bg-blue-50 border border-blue-200 rounded-lg p-4 ${className}`}>
+    <div
+      className={`bg-blue-50 border border-blue-200 rounded-lg p-4 ${className}`}
+    >
       <h4 className="text-sm font-medium text-blue-900 mb-2">{title}</h4>
       <ul className="text-sm text-blue-800 space-y-1">
         {items.map((item, index) => (
@@ -266,7 +269,7 @@ interface KeyboardShortcutProps {
 export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = ({
   keys,
   description,
-  children
+  children,
 }) => {
   const shortcutContent = (
     <div className="text-center">
@@ -277,7 +280,9 @@ export const KeyboardShortcut: React.FC<KeyboardShortcutProps> = ({
             <kbd className="px-1.5 py-0.5 text-xs bg-gray-700 text-white rounded border">
               {key}
             </kbd>
-            {index < keys.length - 1 && <span className="text-gray-400">+</span>}
+            {index < keys.length - 1 && (
+              <span className="text-gray-400">+</span>
+            )}
           </React.Fragment>
         ))}
       </div>
