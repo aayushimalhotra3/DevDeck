@@ -188,8 +188,9 @@ const createSpeedLimit = (windowMs, delayAfter, delayMs) => {
   return slowDown({
     windowMs, // Time window for speed limiting
     delayAfter, // Number of requests before delays start
-    delayMs, // Initial delay in milliseconds
-    maxDelayMs: delayMs * 10 // Maximum delay cap (10x initial delay)
+    delayMs: () => delayMs, // Fixed delay function for express-slow-down v2
+    maxDelayMs: delayMs * 10, // Maximum delay cap (10x initial delay)
+    validate: { delayMs: false } // Disable deprecation warning
   })
 }
 

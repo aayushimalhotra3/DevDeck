@@ -10,11 +10,14 @@ const connectDB = async () => {
       throw new Error('MONGODB_URI environment variable is not defined')
     }
     
-    // Connection options
+    // Connection options (removed deprecated options for Node.js Driver v4+)
     const options = {
-      // Use new URL parser
-      useNewUrlParser: true,
-      useUnifiedTopology: true
+      // Connection pool settings
+      maxPoolSize: 10, // Maximum number of connections
+      minPoolSize: 2,  // Minimum number of connections
+      maxIdleTimeMS: 30000, // Close connections after 30 seconds of inactivity
+      serverSelectionTimeoutMS: 5000, // How long to try selecting a server
+      socketTimeoutMS: 45000 // How long a send or receive on a socket can take
     }
     
     // Connect to MongoDB
