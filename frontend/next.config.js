@@ -9,9 +9,7 @@ const nextConfig = {
     dirs: ['pages', 'components', 'lib', 'app'],
   },
   experimental: {
-    eslint: {
-      ignoreDuringBuilds: false,
-    },
+    // Add experimental features here if needed
   },
 };
 
