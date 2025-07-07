@@ -1,0 +1,141 @@
+{
+  "site": {
+    "name": "DevDeck",
+    "description": "A comprehensive development dashboard for modern teams",
+    "url": "https://devdeck.com",
+    "logo": "/images/logo.png",
+    "favicon": "/favicon.ico",
+    "language": "en",
+    "locale": "en_US",
+    "timezone": "UTC"
+  },
+  "meta": {
+    "defaultTitle": "DevDeck - Development Dashboard",
+    "titleTemplate": "%s | DevDeck",
+    "defaultDescription": "Streamline your development workflow with DevDeck's comprehensive dashboard, analytics, and team collaboration tools.",
+    "keywords": [
+      "development dashboard",
+      "developer tools",
+      "team collaboration",
+      "project management",
+      "analytics",
+      "DevOps",
+      "continuous integration",
+      "code quality"
+    ],
+    "author": "DevDeck Team",
+    "robots": "index,follow",
+    "viewport": "width=device-width, initial-scale=1.0"
+  },
+  "openGraph": {
+    "type": "website",
+    "siteName": "DevDeck",
+    "title": "DevDeck - Development Dashboard",
+    "description": "Streamline your development workflow with comprehensive analytics and team collaboration tools.",
+    "image": "/images/og-image.png",
+    "imageAlt": "DevDeck Dashboard Preview",
+    "imageWidth": 1200,
+    "imageHeight": 630
+  },
+  "twitter": {
+    "card": "summary_large_image",
+    "site": "@devdeck",
+    "creator": "@devdeck",
+    "title": "DevDeck - Development Dashboard",
+    "description": "Streamline your development workflow with comprehensive analytics and team collaboration tools.",
+    "image": "/images/twitter-card.png",
+    "imageAlt": "DevDeck Dashboard Preview"
+  },
+  "structuredData": {
+    "organization": {
+      "@type": "Organization",
+      "name": "DevDeck",
+      "url": "https://devdeck.com",
+      "logo": "https://devdeck.com/images/logo.png",
+      "sameAs": [
+        "https://twitter.com/devdeck",
+        "https://github.com/devdeck",
+        "https://linkedin.com/company/devdeck"
+      ]
+    },
+    "website": {
+      "@type": "WebSite",
+      "name": "DevDeck",
+      "url": "https://devdeck.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://devdeck.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  },
+  "sitemap": {
+    "enabled": true,
+    "changefreq": "weekly",
+    "priority": 0.8,
+    "exclude": [
+      "/admin",
+      "/api",
+      "/private"
+    ]
+  },
+  "robots": {
+    "enabled": true,
+    "userAgent": "*",
+    "allow": ["/"],
+    "disallow": [
+      "/admin",
+      "/api",
+      "/private",
+      "/*.json$"
+    ],
+    "sitemap": "https://devdeck.com/sitemap.xml"
+  },
+  "analytics": {
+    "googleAnalytics": {
+      "enabled": true,
+      "trackingId": "GA_TRACKING_ID"
+    },
+    "googleSearchConsole": {
+      "enabled": true,
+      "verificationCode": "GSC_VERIFICATION_CODE"
+    },
+    "bingWebmaster": {
+      "enabled": true,
+      "verificationCode": "BING_VERIFICATION_CODE"
+    }
+  },
+  "performance": {
+    "preload": [
+      "/fonts/inter.woff2",
+      "/css/critical.css"
+    ],
+    "prefetch": [
+      "/api/dashboard",
+      "/images/hero-bg.webp"
+    ],
+    "lazyLoading": true,
+    "imageOptimization": true,
+    "minification": true,
+    "compression": true
+  },
+  "monitoring": {
+    "lighthouse": {
+      "enabled": true,
+      "thresholds": {
+        "performance": 90,
+        "accessibility": 95,
+        "bestPractices": 90,
+        "seo": 95
+      }
+    },
+    "coreWebVitals": {
+      "enabled": true,
+      "thresholds": {
+        "lcp": 2.5,
+        "fid": 0.1,
+        "cls": 0.1
+      }
+    }
+  }
+}

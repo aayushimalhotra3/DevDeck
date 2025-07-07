@@ -2989,7 +2989,7 @@ EOF
 print_success "Performance dashboard created"
 
 # Create main performance optimization runner
-cat > "$BASE_DIR/run-performance-optimization.sh" << 'EOF'
+cat > "run-performance-optimization.sh" << 'EOF'
 #!/bin/bash
 
 # Main Performance Optimization Runner
@@ -3284,12 +3284,12 @@ print_success "Performance optimization run completed successfully!"
 print_status "Run ID: $TIMESTAMP"
 EOF
 
-chmod +x "$BASE_DIR/run-performance-optimization.sh"
+chmod +x "run-performance-optimization.sh"
 
 print_success "Main performance optimization runner created"
 
 # Create README for performance optimization
-cat > "$BASE_DIR/performance/README.md" << 'EOF'
+cat > "performance/README.md" << 'EOF'
 # DevDeck Performance Optimization System
 
 Comprehensive performance monitoring, analysis, and optimization toolkit for DevDeck.

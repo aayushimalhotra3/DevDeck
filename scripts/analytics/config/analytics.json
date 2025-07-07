@@ -1,0 +1,81 @@
+{
+  "tracking": {
+    "enabled": true,
+    "sampleRate": 1.0,
+    "sessionTimeout": 1800000,
+    "trackPageViews": true,
+    "trackUserInteractions": true,
+    "trackPerformance": true,
+    "trackErrors": true
+  },
+  "privacy": {
+    "anonymizeIPs": true,
+    "respectDNT": true,
+    "cookieConsent": true,
+    "dataRetention": 365
+  },
+  "metrics": {
+    "pageViews": {
+      "enabled": true,
+      "trackReferrer": true,
+      "trackUserAgent": true
+    },
+    "userEngagement": {
+      "enabled": true,
+      "trackScrollDepth": true,
+      "trackTimeOnPage": true,
+      "trackClicks": true
+    },
+    "performance": {
+      "enabled": true,
+      "trackLoadTimes": true,
+      "trackCoreWebVitals": true,
+      "trackResourceTiming": true
+    },
+    "conversion": {
+      "enabled": true,
+      "trackGoals": true,
+      "trackFunnels": true,
+      "trackEvents": true
+    }
+  },
+  "reporting": {
+    "realTime": {
+      "enabled": true,
+      "updateInterval": 30000
+    },
+    "scheduled": {
+      "enabled": true,
+      "dailyReport": "09:00",
+      "weeklyReport": "MON 10:00",
+      "monthlyReport": "1 11:00"
+    },
+    "alerts": {
+      "enabled": true,
+      "thresholds": {
+        "errorRate": 0.05,
+        "responseTime": 2000,
+        "bounceRate": 0.7,
+        "conversionDrop": 0.2
+      }
+    }
+  },
+  "integrations": {
+    "googleAnalytics": {
+      "enabled": false,
+      "trackingId": ""
+    },
+    "mixpanel": {
+      "enabled": false,
+      "projectToken": ""
+    },
+    "amplitude": {
+      "enabled": false,
+      "apiKey": ""
+    },
+    "hotjar": {
+      "enabled": false,
+      "siteId": ""
+    }
+  }
+}

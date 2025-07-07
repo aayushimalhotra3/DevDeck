@@ -47,6 +47,75 @@ router.get('/', auth, asyncHandler(async (req, res) => {
   })
  }))
 
+// @desc    Create/Update portfolio
+// @route   POST /api/portfolio
+// @access  Private
+router.post('/', auth, validatePortfolioUpdate, asyncHandler(async (req, res) => {
+  const {
+    blocks,
+    layout,
+    theme,
+    seo,
+    custom_domain
+  } = req.body
+  
+  let portfolio = await Portfolio.findByUserId(req.user.userId)
+  
+  if (!portfolio) {
+    portfolio = new Portfolio({
+      user: req.user.userId
+    })
+  }
+  
+  // Update fields if provided
+  if (blocks !== undefined) {
+    portfolio.blocks = blocks
+    portfolio.version += 1
+  }
+  
+  if (layout) {
+    portfolio.layout = {
+      ...portfolio.layout,
+      ...layout
+    }
+  }
+  
+  if (theme) {
+    portfolio.theme = {
+      ...portfolio.theme,
+      ...theme
+    }
+  }
+  
+  if (seo) {
+    portfolio.seo = {
+      ...portfolio.seo,
+      ...seo
+    }
+  }
+  
+  if (custom_domain !== undefined) {
+    portfolio.custom_domain = custom_domain
+  }
+  
+  portfolio.last_modified = new Date()
+  await portfolio.save()
+  
+  // Emit real-time update via Socket.io
+  if (req.io) {
+    req.io.to(`portfolio-${req.user.userId}`).emit('portfolio-updated', {
+      portfolio: portfolio,
+      timestamp: new Date()
+    })
+  }
+  
+  res.status(200).json({
+    success: true,
+    message: 'Portfolio saved successfully',
+    portfolio: portfolio
+  })
+}))
+
 // @desc    Update portfolio
 // @route   PUT /api/portfolio
 // @access  Private

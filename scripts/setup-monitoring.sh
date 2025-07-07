@@ -263,7 +263,6 @@ cat > "$METRICS_FILE" << EOF
 EOF
 
 echo "=== Performance Monitor Complete ==="
-EOF
 
 chmod +x "$MONITORING_DIR/performance-monitor.sh"
 print_success "Performance monitoring script created"

@@ -1,0 +1,50 @@
+{
+  "thresholds": {
+    "frontend": {
+      "lcp": 2500,
+      "fid": 100,
+      "cls": 0.1,
+      "fcp": 1800,
+      "resourceSize": 1000000,
+      "resourceDuration": 3000
+    },
+    "backend": {
+      "averageResponseTime": 500,
+      "p95ResponseTime": 2000,
+      "errorRate": 0.05,
+      "memoryUsage": 0.8,
+      "cpuUsage": 0.8
+    },
+    "database": {
+      "connectionUsage": 0.8,
+      "operationVolume": 10000,
+      "queryDuration": 1000
+    }
+  },
+  "monitoring": {
+    "sampleRate": 0.1,
+    "reportInterval": 3600,
+    "alertThresholds": {
+      "criticalResponseTime": 5000,
+      "criticalErrorRate": 0.1,
+      "criticalMemoryUsage": 0.9
+    }
+  },
+  "optimization": {
+    "autoFix": {
+      "enabled": true,
+      "safeMode": true,
+      "allowedFixes": [
+        "compress-assets",
+        "enable-caching",
+        "optimize-images",
+        "minify-resources"
+      ]
+    },
+    "scheduling": {
+      "dailyAnalysis": "02:00",
+      "weeklyReport": "MON 09:00",
+      "monthlyOptimization": "1 03:00"
+    }
+  }
+}

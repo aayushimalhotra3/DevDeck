@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevDeck Performance Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-value {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status.good {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status.critical {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .chart-container {
+            height: 200px;
+            margin: 1rem 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+        
+        .recommendations {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .recommendation {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-left: 4px solid #667eea;
+            background: #f8f9fa;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .recommendation.high {
+            border-left-color: #dc3545;
+        }
+        
+        .recommendation.medium {
+            border-left-color: #ffc107;
+        }
+        
+        .recommendation.low {
+            border-left-color: #28a745;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            border-top: 1px solid #eee;
+            margin-top: 2rem;
+        }
+        
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+        
+        .refresh-btn:hover {
+            background: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🚀 DevDeck Performance Dashboard</h1>
+            <p>Real-time performance monitoring and optimization insights</p>
+            <button class="refresh-btn" onclick="loadData()">🔄 Refresh Data</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="dashboard" id="dashboard">
+            <!-- Dashboard content will be loaded here -->
+        </div>
+        
+        <div class="recommendations" id="recommendations">
+            <h3>🎯 Performance Recommendations</h3>
+            <div id="recommendations-list">
+                <!-- Recommendations will be loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Last updated: <span id="last-updated">Loading...</span></p>
+        <p>DevDeck Performance Optimization System</p>
+    </div>
+    
+    <script>
+        async function loadData() {
+            try {
+                // Load performance data
+                const response = await fetch('/api/performance/dashboard');
+                const data = await response.json();
+                
+                renderDashboard(data);
+                renderRecommendations(data.recommendations || []);
+                
+                document.getElementById('last-updated').textContent = new Date().toLocaleString();
+            } catch (error) {
+                console.error('Failed to load performance data:', error);
+                renderError();
+            }
+        }
+        
+        function renderDashboard(data) {
+            const dashboard = document.getElementById('dashboard');
+            
+            dashboard.innerHTML = `
+                <div class="card">
+                    <h3>⚡ Core Web Vitals</h3>
+                    <div class="metric">
+                        <span>Largest Contentful Paint</span>
+                        <span class="metric-value">${data.frontend?.lcp || 'N/A'}ms</span>
+                    </div>
+                    <div class="metric">
+                        <span>First Input Delay</span>
+                        <span class="metric-value">${data.frontend?.fid || 'N/A'}ms</span>
+                    </div>
+                    <div class="metric">
+                        <span>Cumulative Layout Shift</span>
+                        <span class="metric-value">${data.frontend?.cls || 'N/A'}</span>
+                    </div>
+                    <div class="metric">
+                        <span>First Contentful Paint</span>
+                        <span class="metric-value">${data.frontend?.fcp || 'N/A'}ms</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>🖥️ Backend Performance</h3>
+                    <div class="metric">
+                        <span>Average Response Time</span>
+                        <span class="metric-value">${data.backend?.avgResponseTime || 'N/A'}ms</span>
+                    </div>
+                    <div class="metric">
+                        <span>95th Percentile</span>
+                        <span class="metric-value">${data.backend?.p95ResponseTime || 'N/A'}ms</span>
+                    </div>
+                    <div class="metric">
+                        <span>Error Rate</span>
+                        <span class="metric-value">${((data.backend?.errorRate || 0) * 100).toFixed(2)}%</span>
+                    </div>
+                    <div class="metric">
+                        <span>Memory Usage</span>
+                        <span class="metric-value">${((data.backend?.memoryUsage || 0) * 100).toFixed(1)}%</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>💾 Database Metrics</h3>
+                    <div class="metric">
+                        <span>Connection Usage</span>
+                        <span class="metric-value">${((data.database?.connectionUsage || 0) * 100).toFixed(1)}%</span>
+                    </div>
+                    <div class="metric">
+                        <span>Query Volume</span>
+                        <span class="metric-value">${data.database?.queryVolume || 'N/A'}</span>
+                    </div>
+                    <div class="metric">
+                        <span>Avg Query Time</span>
+                        <span class="metric-value">${data.database?.avgQueryTime || 'N/A'}ms</span>
+                    </div>
+                    <div class="metric">
+                        <span>Slow Queries</span>
+                        <span class="metric-value">${data.database?.slowQueries || 0}</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>📊 Bundle Analysis</h3>
+                    <div class="metric">
+                        <span>Total Bundle Size</span>
+                        <span class="metric-value">${formatBytes(data.bundles?.totalSize || 0)}</span>
+                    </div>
+                    <div class="metric">
+                        <span>Gzipped Size</span>
+                        <span class="metric-value">${formatBytes(data.bundles?.gzippedSize || 0)}</span>
+                    </div>
+                    <div class="metric">
+                        <span>Compression Ratio</span>
+                        <span class="metric-value">${((data.bundles?.compressionRatio || 0) * 100).toFixed(1)}%</span>
+                    </div>
+                    <div class="metric">
+                        <span>Bundle Count</span>
+                        <span class="metric-value">${data.bundles?.count || 0}</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>🗄️ Cache Performance</h3>
+                    <div class="metric">
+                        <span>Cache Hit Rate</span>
+                        <span class="metric-value">${((data.cache?.hitRate || 0) * 100).toFixed(1)}%</span>
+                    </div>
+                    <div class="metric">
+                        <span>Cached Files</span>
+                        <span class="metric-value">${data.cache?.cachedFiles || 0}</span>
+                    </div>
+                    <div class="metric">
+                        <span>Cache Size</span>
+                        <span class="metric-value">${formatBytes(data.cache?.totalSize || 0)}</span>
+                    </div>
+                    <div class="metric">
+                        <span>Cache Efficiency</span>
+                        <span class="status ${getCacheStatus(data.cache?.hitRate)}">${getCacheStatusText(data.cache?.hitRate)}</span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>🎯 Performance Score</h3>
+                    <div class="chart-container">
+                        <div style="text-align: center;">
+                            <div style="font-size: 3rem; font-weight: bold; color: ${getScoreColor(data.overallScore)};">
+                                ${data.overallScore || 0}
+                            </div>
+                            <div>Overall Performance Score</div>
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <span>Lighthouse Score</span>
+                        <span class="metric-value">${data.lighthouse?.performance || 'N/A'}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderRecommendations(recommendations) {
+            const container = document.getElementById('recommendations-list');
+            
+            if (recommendations.length === 0) {
+                container.innerHTML = '<p>🎉 No performance issues detected! Your application is running optimally.</p>';
+                return;
+            }
+            
+            container.innerHTML = recommendations.map(rec => `
+                <div class="recommendation ${rec.severity}">
+                    <h4>${rec.title}</h4>
+                    <p>${rec.description}</p>
+                    <ul>
+                        ${rec.suggestions.slice(0, 3).map(suggestion => `<li>${suggestion}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+        
+        function renderError() {
+            const dashboard = document.getElementById('dashboard');
+            dashboard.innerHTML = `
+                <div class="card" style="grid-column: 1 / -1; text-align: center; color: #dc3545;">
+                    <h3>⚠️ Unable to Load Performance Data</h3>
+                    <p>Please check if the performance monitoring service is running.</p>
+                    <button class="refresh-btn" onclick="loadData()">Try Again</button>
+                </div>
+            `;
+        }
+        
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function getCacheStatus(hitRate) {
+            if (hitRate >= 0.8) return 'good';
+            if (hitRate >= 0.6) return 'warning';
+            return 'critical';
+        }
+        
+        function getCacheStatusText(hitRate) {
+            if (hitRate >= 0.8) return 'Excellent';
+            if (hitRate >= 0.6) return 'Good';
+            return 'Needs Improvement';
+        }
+        
+        function getScoreColor(score) {
+            if (score >= 90) return '#28a745';
+            if (score >= 70) return '#ffc107';
+            return '#dc3545';
+        }
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', loadData);
+        
+        // Auto-refresh every 5 minutes
+        setInterval(loadData, 5 * 60 * 1000);
+    </script>
+</body>
+</html>

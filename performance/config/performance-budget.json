@@ -1,0 +1,39 @@
+{
+  "budgets": {
+    "timing": {
+      "firstContentfulPaint": 1800,
+      "largestContentfulPaint": 2500,
+      "firstInputDelay": 100,
+      "cumulativeLayoutShift": 0.1,
+      "timeToInteractive": 3800,
+      "speedIndex": 3000
+    },
+    "resources": {
+      "totalSize": 5000000,
+      "imageSize": 2000000,
+      "scriptSize": 1000000,
+      "stylesheetSize": 500000,
+      "fontSize": 300000,
+      "documentSize": 100000,
+      "mediaSize": 1000000,
+      "thirdPartySize": 500000
+    },
+    "counts": {
+      "totalRequests": 100,
+      "imageRequests": 30,
+      "scriptRequests": 20,
+      "stylesheetRequests": 10,
+      "fontRequests": 5,
+      "thirdPartyRequests": 10
+    }
+  },
+  "alerts": {
+    "warningThreshold": 0.8,
+    "errorThreshold": 1.2,
+    "notifications": {
+      "email": true,
+      "slack": true,
+      "webhook": true
+    }
+  }
+}
