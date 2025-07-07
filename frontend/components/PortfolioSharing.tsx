@@ -28,7 +28,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { FeatureTooltip, Tooltip } from './Tooltip';
 import { AnimatedContainer, ScaleOnHover, LoadingSpinner } from './AnimatedContainer';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 
 interface PortfolioSharingProps {
   portfolioId: string;
@@ -371,7 +371,7 @@ export function PortfolioSharing({
                       className="flex items-center gap-2"
                     >
                       {isGeneratingQR ? (
-                        <LoadingSpinner size="sm" />
+                        <LoadingSpinner size={16} />
                       ) : (
                         <QrCode className="w-4 h-4" />
                       )}
