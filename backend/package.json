@@ -8,7 +8,9 @@
     "start": "node src/server.js",
     "build": "echo 'No build step required for Node.js backend'",
     "test": "jest",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "verify": "node ../scripts/verify-backend-fixes.js",
+    "check-health": "node -e \"require('./src/config/database').connectDB().then(() => console.log('✅ Backend health check passed')).catch(err => { console.error('❌ Backend health check failed:', err.message); process.exit(1); })\""
   },
   "dependencies": {
     "axios": "^1.6.0",
