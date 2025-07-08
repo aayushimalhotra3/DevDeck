@@ -17,26 +17,27 @@ const shortcuts: Shortcut[] = [
   // Editor shortcuts
   { keys: ['Ctrl', 'S'], description: 'Save portfolio', category: 'Editor' },
   { keys: ['Cmd', 'S'], description: 'Save portfolio (Mac)', category: 'Editor' },
-  { keys: ['Ctrl', 'Z'], description: 'Undo', category: 'Editor' },
-  { keys: ['Cmd', 'Z'], description: 'Undo (Mac)', category: 'Editor' },
-  { keys: ['Ctrl', 'Shift', 'Z'], description: 'Redo', category: 'Editor' },
-  { keys: ['Cmd', 'Shift', 'Z'], description: 'Redo (Mac)', category: 'Editor' },
-  { keys: ['Ctrl', 'Y'], description: 'Redo (Alt)', category: 'Editor' },
-  { keys: ['Cmd', 'Y'], description: 'Redo (Mac Alt)', category: 'Editor' },
+  { keys: ['Ctrl', 'Z'], description: 'Undo last action', category: 'Editor' },
+  { keys: ['Cmd', 'Z'], description: 'Undo last action (Mac)', category: 'Editor' },
+  { keys: ['Ctrl', 'Shift', 'Z'], description: 'Redo last action', category: 'Editor' },
+  { keys: ['Cmd', 'Shift', 'Z'], description: 'Redo last action (Mac)', category: 'Editor' },
+  { keys: ['Ctrl', 'Y'], description: 'Redo last action (Alt)', category: 'Editor' },
+  { keys: ['Cmd', 'Y'], description: 'Redo last action (Mac Alt)', category: 'Editor' },
   
   // Navigation shortcuts
-  { keys: ['Ctrl', 'P'], description: 'Toggle preview', category: 'Navigation' },
-  { keys: ['Cmd', 'P'], description: 'Toggle preview (Mac)', category: 'Navigation' },
-  { keys: ['Ctrl', ','], description: 'Open settings', category: 'Navigation' },
-  { keys: ['Cmd', ','], description: 'Open settings (Mac)', category: 'Navigation' },
-  { keys: ['Escape'], description: 'Close dialogs/panels', category: 'Navigation' },
+  { keys: ['Ctrl', 'P'], description: 'Toggle preview mode', category: 'Navigation' },
+  { keys: ['Cmd', 'P'], description: 'Toggle preview mode (Mac)', category: 'Navigation' },
+  { keys: ['Escape'], description: 'Deselect current block', category: 'Navigation' },
+  { keys: ['↑'], description: 'Select previous block', category: 'Navigation' },
+  { keys: ['↓'], description: 'Select next block', category: 'Navigation' },
+  { keys: ['Ctrl', 'A'], description: 'Select first block', category: 'Navigation' },
+  { keys: ['Cmd', 'A'], description: 'Select first block (Mac)', category: 'Navigation' },
   
   // Block shortcuts
   { keys: ['Ctrl', 'D'], description: 'Duplicate selected block', category: 'Blocks' },
   { keys: ['Cmd', 'D'], description: 'Duplicate selected block (Mac)', category: 'Blocks' },
   { keys: ['Delete'], description: 'Delete selected block', category: 'Blocks' },
-  { keys: ['Backspace'], description: 'Delete selected block', category: 'Blocks' },
-  { keys: ['↑', '↓'], description: 'Navigate between blocks', category: 'Blocks' },
+  { keys: ['Backspace'], description: 'Delete selected block (Alt)', category: 'Blocks' },
   
   // General shortcuts
   { keys: ['Ctrl', '/'], description: 'Show keyboard shortcuts', category: 'General' },

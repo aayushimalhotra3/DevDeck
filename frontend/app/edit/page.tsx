@@ -41,6 +41,7 @@ export default function EditPortfolio() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | undefined>(undefined);
+  const [autosaveProgress, setAutosaveProgress] = useState(0);
   const [showGitHubImport, setShowGitHubImport] = useState(false);
   const autosaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
@@ -78,7 +79,7 @@ export default function EditPortfolio() {
     }
   }, [history, historyIndex]);
 
-  // Autosave functionality
+  // Enhanced autosave functionality with better visual feedback
   const autosave = useCallback(
     async (blocksToSave: PortfolioBlock[]) => {
       if (!hasUnsavedChanges) return;
@@ -99,14 +100,25 @@ export default function EditPortfolio() {
 
         if (response.ok) {
           setHasUnsavedChanges(false);
+          setLastSaved(new Date());
+          // Enhanced visual feedback with subtle animation
           toast({
-            title: 'Auto-saved',
+            title: '✅ Auto-saved',
             description: 'Your changes have been automatically saved.',
-            duration: 2000,
+            duration: 1500,
+            className: 'border-green-200 bg-green-50 text-green-800',
           });
+        } else {
+          throw new Error('Autosave failed');
         }
       } catch (error) {
         console.error('Autosave failed:', error);
+        toast({
+          title: '⚠️ Autosave failed',
+          description: 'Failed to auto-save. Your changes are still preserved locally.',
+          duration: 3000,
+          variant: 'destructive',
+        });
       } finally {
         setIsAutoSaving(false);
       }
@@ -114,45 +126,154 @@ export default function EditPortfolio() {
     [hasUnsavedChanges, toast]
   );
 
-  // Keyboard shortcuts
+  // Enhanced keyboard shortcuts for common actions
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey) {
-        switch (e.key) {
-          case 's':
-            e.preventDefault();
-            handleSavePortfolio();
-            break;
-          case 'z':
-            e.preventDefault();
-            if (e.shiftKey) {
-              redo();
-            } else {
-              undo();
-            }
-            break;
-          case 'y':
-            e.preventDefault();
-            redo();
-            break;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const { ctrlKey, metaKey, shiftKey, key, altKey } = event;
+      const isCtrlOrCmd = ctrlKey || metaKey;
+
+      // Save
+      if (isCtrlOrCmd && key === 's') {
+        event.preventDefault();
+        handleSavePortfolio();
+        return;
+      }
+      
+      // Undo
+      if (isCtrlOrCmd && key === 'z' && !shiftKey) {
+        event.preventDefault();
+        undo();
+        return;
+      }
+      
+      // Redo
+      if ((isCtrlOrCmd && key === 'z' && shiftKey) || (isCtrlOrCmd && key === 'y')) {
+        event.preventDefault();
+        redo();
+        return;
+      }
+      
+      // Toggle preview
+      if (isCtrlOrCmd && key === 'p') {
+        event.preventDefault();
+        setActiveTab(activeTab === 'preview' ? 'editor' : 'preview');
+        toast({
+          title: activeTab === 'preview' ? 'Edit Mode' : 'Preview Mode',
+          description: activeTab === 'preview' ? 'Switched to edit mode' : 'Switched to preview mode',
+          duration: 1000,
+        });
+        return;
+      }
+      
+      // Duplicate selected block
+      if (isCtrlOrCmd && key === 'd' && selectedBlockId) {
+        event.preventDefault();
+        const selectedBlock = blocks.find(b => b.id === selectedBlockId);
+        if (selectedBlock) {
+          const duplicatedBlock = {
+            ...selectedBlock,
+            id: Date.now().toString(),
+            position: {
+              x: selectedBlock.position.x + 20,
+              y: selectedBlock.position.y + 20,
+            },
+          };
+          const newBlocks = [...blocks, duplicatedBlock];
+          handleBlockUpdate(newBlocks);
+          setSelectedBlockId(duplicatedBlock.id);
+          toast({
+            title: '📋 Block duplicated',
+            description: 'Block has been duplicated and selected',
+            duration: 1500,
+          });
         }
+        return;
+      }
+      
+      // Delete selected block
+      if ((key === 'Delete' || key === 'Backspace') && selectedBlockId && !(event.target as HTMLElement)?.closest('input, textarea, [contenteditable]')) {
+        event.preventDefault();
+        const newBlocks = blocks.filter(b => b.id !== selectedBlockId);
+        handleBlockUpdate(newBlocks);
+        setSelectedBlockId(null);
+        toast({
+          title: '🗑️ Block deleted',
+          description: 'Selected block has been removed',
+          duration: 1500,
+        });
+        return;
+      }
+      
+      // Navigate between blocks with arrow keys
+      if ((key === 'ArrowUp' || key === 'ArrowDown') && !(event.target as HTMLElement)?.closest('input, textarea, [contenteditable]')) {
+        event.preventDefault();
+        const currentIndex = blocks.findIndex(b => b.id === selectedBlockId);
+        if (currentIndex !== -1) {
+          const nextIndex = key === 'ArrowUp' 
+            ? Math.max(0, currentIndex - 1)
+            : Math.min(blocks.length - 1, currentIndex + 1);
+          setSelectedBlockId(blocks[nextIndex]?.id || null);
+        } else if (blocks.length > 0) {
+          setSelectedBlockId(blocks[0].id);
+        }
+        return;
+      }
+      
+      // Escape to deselect
+      if (key === 'Escape') {
+        setSelectedBlockId(null);
+        return;
+      }
+      
+      // Select all blocks
+      if (isCtrlOrCmd && key === 'a' && !(event.target as HTMLElement)?.closest('input, textarea, [contenteditable]')) {
+        event.preventDefault();
+        // For now, just select the first block, but this could be enhanced for multi-selection
+        if (blocks.length > 0) {
+          setSelectedBlockId(blocks[0].id);
+        }
+        return;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [undo, redo]);
+  }, [undo, redo, activeTab, selectedBlockId, blocks, toast, handleBlockUpdate, handleSavePortfolio]);
 
-  // Autosave timer
+  // Enhanced autosave timer with progress tracking
   useEffect(() => {
-    if (hasUnsavedChanges) {
+    if (hasUnsavedChanges && !isAutoSaving) {
       if (autosaveTimeoutRef.current) {
         clearTimeout(autosaveTimeoutRef.current);
       }
-
+      
+      // Reset progress and start countdown
+      setAutosaveProgress(0);
+      const startTime = Date.now();
+      const duration = 3000; // 3 seconds
+      
+      // Update progress every 100ms
+      const progressInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min((elapsed / duration) * 100, 100);
+        setAutosaveProgress(progress);
+        
+        if (progress >= 100) {
+          clearInterval(progressInterval);
+        }
+      }, 100);
+      
       autosaveTimeoutRef.current = setTimeout(() => {
+        clearInterval(progressInterval);
+        setAutosaveProgress(0);
         autosave(blocks);
-      }, 3000); // Autosave after 3 seconds of inactivity
+      }, duration);
+      
+      return () => {
+        clearInterval(progressInterval);
+      };
+    } else {
+      setAutosaveProgress(0);
     }
 
     return () => {
@@ -160,7 +281,7 @@ export default function EditPortfolio() {
         clearTimeout(autosaveTimeoutRef.current);
       }
     };
-  }, [blocks, hasUnsavedChanges, autosave]);
+  }, [blocks, hasUnsavedChanges, isAutoSaving, autosave]);
 
   useEffect(() => {
     // Load existing portfolio data
@@ -303,6 +424,7 @@ export default function EditPortfolio() {
         hasUnsavedChanges={hasUnsavedChanges}
         isAutoSaving={isAutoSaving}
         lastSaved={lastSaved}
+        autosaveProgress={autosaveProgress}
       />
 
       <div className="flex-1 flex overflow-hidden">

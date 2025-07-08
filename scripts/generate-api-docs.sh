@@ -801,7 +801,7 @@ generate_report() {
     
     # Generate JSON report
     local json_results=$(IFS=','; echo "${test_results[*]}")
-    cat > "$TEST_RESULTS_FILE" << EOF
+    cat > "$TEST_RESULTS_FILE" << RESULTS_EOF
 {
   "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
   "summary": {
@@ -814,12 +814,12 @@ generate_report() {
     $json_results
   }
 }
-EOF
+RESULTS_EOF
     
     echo "Detailed results saved to: $TEST_RESULTS_FILE"
     echo "Test log saved to: $LOG_FILE"
     
-    if [ $FAILED_TESTS -gt 0 ]; then
+    if [ "${FAILED_TESTS:-0}" -gt 0 ]; then
         exit 1
     fi
 }

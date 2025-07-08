@@ -1,13 +1,26 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Save, Undo, Redo, Loader2, Check, Clock, AlertCircle, Eye, Settings, Share2 } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { 
+  Save, 
+  Undo, 
+  Redo, 
+  Eye, 
+  EyeOff, 
+  Download, 
+  Upload,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+  Clock,
+  Check
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { KeyboardShortcuts } from './KeyboardShortcuts';
-import { KeyboardTooltip, FeatureTooltip } from './Tooltip';
+import { KeyboardTooltip } from './KeyboardTooltip';
 
 interface EditorToolbarProps {
   onSave: () => void;
@@ -19,6 +32,9 @@ interface EditorToolbarProps {
   hasUnsavedChanges: boolean;
   isAutoSaving: boolean;
   lastSaved?: Date;
+  autosaveProgress?: number;
+  onTogglePreview?: () => void;
+  isPreviewMode?: boolean;
 }
 
 export function EditorToolbar({
@@ -30,7 +46,8 @@ export function EditorToolbar({
   saving,
   hasUnsavedChanges,
   isAutoSaving,
-  lastSaved
+  lastSaved,
+  autosaveProgress = 0,
 }: EditorToolbarProps) {
   const getSaveStatus = () => {
     if (saving || isAutoSaving) {
@@ -157,22 +174,57 @@ export function EditorToolbar({
                 )}
               </Button>
             </KeyboardTooltip>
-            
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={saveStatus.text}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Badge variant={saveStatus.variant} className={`gap-1 ${saveStatus.className}`}>
-                  <saveStatus.icon className="h-3 w-3" />
-                  {saveStatus.text}
-                </Badge>
-              </motion.div>
-            </AnimatePresence>
           </div>
+
+          {/* Enhanced Save Status with Visual Feedback */}
+           <div className="flex items-center gap-2">
+             {isAutoSaving && (
+               <motion.div 
+                 className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded-md border border-blue-200"
+                 initial={{ opacity: 0, scale: 0.9 }}
+                 animate={{ opacity: 1, scale: 1 }}
+                 transition={{ duration: 0.2 }}
+               >
+                 <Loader2 className="h-3 w-3 animate-spin" />
+                 <span className="font-medium">Auto-saving...</span>
+               </motion.div>
+             )}
+             {!isAutoSaving && hasUnsavedChanges && (
+               <motion.div 
+                 className="flex items-center gap-3 text-sm text-amber-700 bg-amber-50 px-2 py-1 rounded-md border border-amber-200"
+                 initial={{ opacity: 0, x: -10 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 transition={{ duration: 0.2 }}
+               >
+                 <AlertCircle className="h-3 w-3" />
+                 <span className="font-medium">Unsaved changes</span>
+                 {autosaveProgress > 0 && (
+                   <div className="flex items-center gap-1">
+                     <div className="w-12 h-1 bg-amber-200 rounded-full overflow-hidden">
+                       <motion.div 
+                         className="h-full bg-amber-500 rounded-full"
+                         initial={{ width: 0 }}
+                         animate={{ width: `${autosaveProgress}%` }}
+                         transition={{ duration: 0.1 }}
+                       />
+                     </div>
+                     <span className="text-xs text-amber-600">{Math.round(autosaveProgress)}%</span>
+                   </div>
+                 )}
+               </motion.div>
+             )}
+             {!isAutoSaving && !hasUnsavedChanges && lastSaved && (
+               <motion.div 
+                 className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-2 py-1 rounded-md border border-green-200"
+                 initial={{ opacity: 0, scale: 0.9 }}
+                 animate={{ opacity: 1, scale: 1 }}
+                 transition={{ duration: 0.3 }}
+               >
+                 <Check className="h-3 w-3" />
+                 <span className="font-medium">Saved {formatTimeAgo(lastSaved)}</span>
+               </motion.div>
+             )}
+           </div>
         </div>
       </div>
     </div>

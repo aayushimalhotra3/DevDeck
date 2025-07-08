@@ -1,0 +1,497 @@
+openapi: 3.0.3
+info:
+  title: DevDeck API
+  description: |
+    DevDeck is a developer portfolio platform that allows developers to create, 
+    customize, and share their professional portfolios.
+    
+    ## Authentication
+    
+    DevDeck uses GitHub OAuth for authentication and JWT tokens for API access.
+    
+    ## Rate Limiting
+    
+    - General API: 100 requests per 15 minutes per IP
+    - Authentication: 5 requests per 15 minutes per IP
+    - Analytics tracking: 1000 requests per hour per IP
+  version: 1.0.0
+  contact:
+    name: DevDeck Support
+    url: https://github.com/your-org/devdeck
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://your-backend.railway.app
+    description: Production server
+  - url: http://localhost:5000
+    description: Development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Get application health status
+      description: Returns the health status of the application and its services
+      security: []
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /auth/github:
+    get:
+      tags:
+        - Authentication
+      summary: GitHub OAuth login
+      description: Redirects to GitHub OAuth for authentication
+      security: []
+      responses:
+        '302':
+          description: Redirect to GitHub OAuth
+
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user
+      description: Returns the currently authenticated user's information
+      responses:
+        '200':
+          description: Current user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/users/profile:
+    get:
+      tags:
+        - Users
+      summary: Get user profile
+      description: Get the current user's profile information
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    put:
+      tags:
+        - Users
+      summary: Update user profile
+      description: Update the current user's profile information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/portfolio:
+    get:
+      tags:
+        - Portfolios
+      summary: Get user portfolios
+      description: Get all portfolios for the current user
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Order'
+      responses:
+        '200':
+          description: List of portfolios
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    post:
+      tags:
+        - Portfolios
+      summary: Create portfolio
+      description: Create a new portfolio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePortfolioRequest'
+      responses:
+        '201':
+          description: Portfolio created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/portfolio/{id}:
+    get:
+      tags:
+        - Portfolios
+      summary: Get portfolio by ID
+      description: Get a specific portfolio by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Portfolio ID
+      responses:
+        '200':
+          description: Portfolio details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      tags:
+        - Portfolios
+      summary: Update portfolio
+      description: Update a specific portfolio
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Portfolio ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePortfolioRequest'
+      responses:
+        '200':
+          description: Portfolio updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      tags:
+        - Portfolios
+      summary: Delete portfolio
+      description: Delete a specific portfolio
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Portfolio ID
+      responses:
+        '200':
+          description: Portfolio deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: Page number (1-based)
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    
+    Limit:
+      name: limit
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+    
+    Sort:
+      name: sort
+      in: query
+      description: Sort field
+      schema:
+        type: string
+        default: createdAt
+    
+    Order:
+      name: order
+      in: query
+      description: Sort order
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: desc
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: healthy
+        timestamp:
+          type: string
+          format: date-time
+        uptime:
+          type: number
+        services:
+          type: object
+          properties:
+            database:
+              type: object
+              properties:
+                status:
+                  type: string
+                host:
+                  type: string
+                name:
+                  type: string
+            cache:
+              type: object
+              properties:
+                status:
+                  type: string
+        version:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        githubId:
+          type: number
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+        bio:
+          type: string
+        location:
+          type: string
+        website:
+          type: string
+          format: uri
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Portfolio:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        isPublic:
+          type: boolean
+        theme:
+          type: string
+        customDomain:
+          type: string
+          nullable: true
+        views:
+          type: number
+        content:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    UserResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/User'
+
+    PortfolioResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/Portfolio'
+
+    PortfolioListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            portfolios:
+              type: array
+              items:
+                $ref: '#/components/schemas/Portfolio'
+            pagination:
+              $ref: '#/components/schemas/Pagination'
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        pages:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrev:
+          type: boolean
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        bio:
+          type: string
+        location:
+          type: string
+        website:
+          type: string
+          format: uri
+
+    CreatePortfolioRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        isPublic:
+          type: boolean
+          default: true
+        theme:
+          type: string
+          default: modern
+
+    UpdatePortfolioRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        isPublic:
+          type: boolean
+        theme:
+          type: string
+        content:
+          type: object
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

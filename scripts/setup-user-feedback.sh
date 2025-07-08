@@ -1558,7 +1558,7 @@ generate_weekly_report() {
     local response_rate=$(jq -r '.responseRate' "$analytics_file")
     
     # Generate report
-    cat > "$report_file" << EOF
+    cat > "$report_file" << REPORTEOF
 # Weekly Feedback Report - $report_date
 
 ## Summary
@@ -1583,7 +1583,7 @@ $(if [ "$(echo "$response_rate < 20" | bc -l)" = "1" ]; then echo "- 🟡 Low re
 
 ---
 *Generated on $report_date by DevDeck Feedback Automation*
-EOF
+REPORTEOF
     
     print_status "Weekly report generated: $report_file"
     

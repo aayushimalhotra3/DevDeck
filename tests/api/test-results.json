@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-07-08T17:21:14Z",
+  "summary": {
+    "total": 8,
+    "passed": 3,
+    "failed": 5,
+    "success_rate": 37
+  },
+  "tests": {
+    "Health Check": {"status": "PASS", "code": 200},"GitHub OAuth Redirect": {"status": "FAIL", "expected": 302, "actual": 404},"Get Current User": {"status": "FAIL", "expected": 200, "actual": 401},"Public Portfolio Test": {"status": "FAIL", "expected": 200, "actual": 404},"Get User Portfolios": {"status": "FAIL", "expected": 200, "actual": 401},"Create Portfolio": {"status": "FAIL", "expected": 201, "actual": 401},"Not Found": {"status": "PASS", "code": 404},"Unauthorized Access": {"status": "PASS", "code": 401}
+  }
+}

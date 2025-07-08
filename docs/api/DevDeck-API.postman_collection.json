@@ -1,0 +1,395 @@
+{
+  "info": {
+    "name": "DevDeck API",
+    "description": "Complete API collection for DevDeck - Developer Portfolio Platform",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Get Health Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "GitHub OAuth Login",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/github",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "github"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"bio\": \"Full-stack developer passionate about React and Node.js\",\n  \"location\": \"San Francisco, CA\",\n  \"website\": \"https://johndoe.dev\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "profile"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Portfolio Management",
+      "item": [
+        {
+          "name": "Get User Portfolios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/portfolio?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "portfolio"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Portfolio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"My New Portfolio\",\n  \"description\": \"A showcase of my latest work\",\n  \"isPublic\": true,\n  \"theme\": \"modern\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/portfolio",
+              "host": ["{{base_url}}"],
+              "path": ["api", "portfolio"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Portfolio by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/portfolio/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "portfolio", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "portfolio_id"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Portfolio",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Portfolio Title\",\n  \"description\": \"Updated description\",\n  \"isPublic\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/portfolio/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "portfolio", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "portfolio_id"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Portfolio",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/portfolio/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "portfolio", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "portfolio_id"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Public Portfolio",
+      "item": [
+        {
+          "name": "Get Public Portfolio by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/portfolio/public/:slug",
+              "host": ["{{base_url}}"],
+              "path": ["api", "portfolio", "public", ":slug"],
+              "variable": [
+                {
+                  "key": "slug",
+                  "value": "portfolio-slug"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Public Portfolios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/portfolio/public/user/:username",
+              "host": ["{{base_url}}"],
+              "path": ["api", "portfolio", "public", "user", ":username"],
+              "variable": [
+                {
+                  "key": "username",
+                  "value": "johndoe"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Project Management",
+      "item": [
+        {
+          "name": "Get Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/projects?portfolioId=:portfolioId",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects"],
+              "query": [
+                {
+                  "key": "portfolioId",
+                  "value": ":portfolioId"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"portfolioId\": \"portfolio_id\",\n  \"title\": \"My Project\",\n  \"description\": \"Project description\",\n  \"technologies\": [\"React\", \"Node.js\"],\n  \"githubUrl\": \"https://github.com/user/repo\",\n  \"liveUrl\": \"https://project.com\",\n  \"featured\": true,\n  \"status\": \"completed\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/projects",
+              "host": ["{{base_url}}"],
+              "path": ["api", "projects"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Get Portfolio Analytics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/analytics/portfolio/:id?startDate=2024-01-01&endDate=2024-01-31",
+              "host": ["{{base_url}}"],
+              "path": ["api", "analytics", "portfolio", ":id"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2024-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-01-31"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "portfolio_id"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Track Portfolio View",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"portfolioId\": \"portfolio_id\",\n  \"event\": \"view\",\n  \"source\": \"direct\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/analytics/track",
+              "host": ["{{base_url}}"],
+              "path": ["api", "analytics", "track"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
